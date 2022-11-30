@@ -1,0 +1,73 @@
+public abstract interface annotation class org/hyacinthbots/docgenerator/annotations/ConfigurationBuilderDSL : java/lang/annotation/Annotation {
+}
+
+public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
+	public field commandTypes Ljava/util/List;
+	public field environment Ljava/lang/String;
+	public field fileFormat Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public field fileOutputLocation Ljava/nio/file/Path;
+	public fun <init> ()V
+	public fun getCommandTypes ()Ljava/util/List;
+	public fun getEnabled ()Z
+	public fun getEnvironment ()Ljava/lang/String;
+	public fun getFileFormat ()Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public fun getFileOutputLocation ()Ljava/nio/file/Path;
+	public final fun getTranslationSupport ()Lorg/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder;
+	public fun setCommandTypes (Ljava/util/List;)V
+	public fun setEnabled (Z)V
+	public fun setEnvironment (Ljava/lang/String;)V
+	public fun setFileFormat (Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;)V
+	public fun setFileOutputLocation (Ljava/nio/file/Path;)V
+	public final fun translationSupport (Lkotlin/jvm/functions/Function1;)V
+}
+
+public class org/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder {
+	public fun <init> ()V
+	public fun getBaseLanguage ()Ljava/util/Locale;
+	public fun getSupportTranslations ()Z
+	public fun getSupportedLanguages ()Ljava/util/List;
+	public fun setBaseLanguage (Ljava/util/Locale;)V
+	public fun setSupportTranslations (Z)V
+	public fun setSupportedLanguages (Ljava/util/List;)V
+}
+
+public final class org/hyacinthbots/docgenerator/builder/_docGeneratorKt {
+	public static final fun docsGenerator (Lcom/kotlindiscord/kord/extensions/builders/ExtensibleBotBuilder;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/hyacinthbots/docgenerator/enums/CommandTypes : java/lang/Enum {
+	public static final field MESSAGE Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static final field SLASH Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static final field USER Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+}
+
+public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/Enum {
+	public static final field DEVELOPMENT Lorg/hyacinthbots/docgenerator/enums/Environment;
+	public static final field PRODUCTION Lorg/hyacinthbots/docgenerator/enums/Environment;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/Environment;
+	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/Environment;
+}
+
+public final class org/hyacinthbots/docgenerator/enums/SupportedFileFormat : java/lang/Enum {
+	public static final field MARKDOWN Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public static final field TEXT Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public final fun getFileExtension ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+}
+
+public final class org/hyacinthbots/docgenerator/excpetions/ConflictingFileFormatException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/hyacinthbots/docgenerator/excpetions/InvalidEnvironmentVariableException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public class org/hyacinthbots/gradle/docgenerator/GeneratorGradlePlugin {
+	public fun <init> ()V
+}
+

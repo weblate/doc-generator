@@ -1,0 +1,13 @@
+[versions]
+kordex = "1.5.5-20221121.113710-37"
+
+detekt = "1.22.0"
+logging = "3.0.4"
+jb-annotations = "23.0.0"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+kordex = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kordex" }
+logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jb-annotations"}
