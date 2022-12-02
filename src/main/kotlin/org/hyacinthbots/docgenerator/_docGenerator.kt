@@ -49,7 +49,8 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 						action.fileOutputLocation,
 						action.fileFormat,
 						action.commandTypes,
-						extensions.values.toMutableList()
+						extensions.values.toMutableList(),
+						if (action.translationSupport.supportTranslations) action.translationSupport.supportedLanguages else null
 					)
 				}
 

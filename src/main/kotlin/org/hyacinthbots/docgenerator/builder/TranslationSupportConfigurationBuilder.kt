@@ -15,7 +15,7 @@ import java.util.*
 
 @ConfigurationBuilderDSL
 public open class TranslationSupportConfigurationBuilder {
-	public open var supportTranslations: Boolean = true
+	public open var supportTranslations: Boolean = false
 
 	public open var baseLanguage: Locale = SupportedLocales.ENGLISH
 
