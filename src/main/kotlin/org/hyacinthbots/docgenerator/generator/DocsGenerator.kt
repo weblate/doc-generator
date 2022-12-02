@@ -116,11 +116,7 @@ internal object DocsGenerator {
 							var arguments = ""
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 								arguments += formatArguments(
-									arg,
-									false,
-									slashCommand.translationsProvider,
-									slashCommand.bundle,
-									language
+									arg, false, slashCommand.translationsProvider, slashCommand.bundle, language
 								)
 							}
 							if (arguments.isEmpty()) {
