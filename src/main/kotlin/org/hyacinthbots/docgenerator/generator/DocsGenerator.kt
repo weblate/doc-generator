@@ -64,79 +64,62 @@ internal object DocsGenerator {
 
 					for (slashCommand in slashCommands) {
 						var commandInfo = ""
+						val parentProvider = slashCommand.translationsProvider
 						if (slashCommand.subCommands.isNotEmpty()) {
 							commandInfo += "### ${
-								"header.parentcommand.name".translate(slashCommand.translationsProvider, language)
+								"header.parentcommand.name".translate(parentProvider, language)
 							}: `${
-								slashCommand.name.translate(
-									slashCommand.translationsProvider, language, slashCommand.bundle
-								)
+								slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
 							}`\n* **${
-								"header.parentcommand.description".translate(
-									slashCommand.translationsProvider, language
-								)
+								"header.parentcommand.description".translate(parentProvider, language)
 							}**: ${
-								slashCommand.description.translate(
-									slashCommand.translationsProvider, language, slashCommand.bundle
-								)
+								slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
 							}\n"
+
 							slashCommand.subCommands.forEach { subCommand ->
 								var arguments = ""
+								val subProvider = subCommand.translationsProvider
 								subCommand.arguments?.invoke()?.args?.forEach { arg ->
 									arguments += formatArguments(
-										arg,
-										true,
-										subCommand.translationsProvider,
-										subCommand.bundle,
-										language
+										arg, true, subProvider, subCommand.bundle, language
 									)
 								}
 
-								if (arguments.isEmpty()) {
-									arguments = "arguments.none".translate(subCommand.translationsProvider, language)
-								}
+								if (arguments.isEmpty()) arguments = "arguments.none".translate(subProvider, language)
 
 								commandInfo += "\t#### ${
-									"header.subcommand.name".translate(subCommand.translationsProvider, language)
+									"header.subcommand.name".translate(subProvider, language)
 								}: `${
-									subCommand.name.translate(
-										subCommand.translationsProvider, language, subCommand.bundle
-									)
+									subCommand.name.translate(subProvider, language, subCommand.bundle)
 								}`\n\t* **${
-									"header.subcommand.description".translate(subCommand.translationsProvider, language)
+									"header.subcommand.description".translate(subProvider, language)
 								}**: ${
-									subCommand.description.translate(
-										subCommand.translationsProvider, language, subCommand.bundle
-									)
+									subCommand.description.translate(subProvider, language, subCommand.bundle)
 								}\n\t\t* **${
-									"header.arguments".translate(slashCommand.translationsProvider, language)
+									"header.arguments".translate(subProvider, language)
 								}**:\n$arguments\n"
 							}
 						} else {
 							var arguments = ""
+							val slashProvider = slashCommand.translationsProvider
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 								arguments += formatArguments(
-									arg, false, slashCommand.translationsProvider, slashCommand.bundle, language
+									arg, false, slashProvider, slashCommand.bundle, language
 								)
 							}
 							if (arguments.isEmpty()) {
-								arguments = "arguments.none".translate(slashCommand.translationsProvider, language)
+								arguments = "arguments.none".translate(slashProvider, language)
 							}
 							commandInfo +=
-								"### ${
-									"header.command.name".translate(slashCommand.translationsProvider, language)
+								"### ${"header.command.name".translate(slashProvider, language)
 								}: `${
-									slashCommand.description.translate(
-										slashCommand.translationsProvider, language, slashCommand.bundle
-									)
+									slashCommand.description.translate(slashProvider, language, slashCommand.bundle)
 								}`\n* ${
-									"header.command.description".translate(slashCommand.translationsProvider, language)
+									"header.command.description".translate(slashProvider, language)
 								}: ${
-									slashCommand.description.translate(
-										slashCommand.translationsProvider, language, slashCommand.bundle
-									)
+									slashCommand.description.translate(slashProvider, language, slashCommand.bundle)
 								}\n\t* ${
-									"header.arguments".translate(slashCommand.translationsProvider, language)
+									"header.arguments".translate(slashProvider, language)
 								}:\n$arguments\n"
 						}
 

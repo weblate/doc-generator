@@ -121,7 +121,7 @@ detekt {
 
 license {
     setHeader(rootProject.file("HEADER"))
-    include("**/*.kt", "**/*.java")
+    include("**/*.kt", "**/*.java", "**/strings**.properties")
 }
 
 publishing {
