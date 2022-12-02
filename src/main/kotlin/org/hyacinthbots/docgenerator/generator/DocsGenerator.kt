@@ -9,6 +9,7 @@
 
 package org.hyacinthbots.docgenerator.generator
 
+import com.kotlindiscord.kord.extensions.commands.Argument
 import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
 import java.io.IOException
 import java.nio.file.Path
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createFile
@@ -66,9 +68,7 @@ internal object DocsGenerator {
 							slashCommand.subCommands.forEach { subCommand ->
 								var arguments = ""
 								subCommand.arguments?.invoke()?.args?.forEach { arg ->
-									arguments += "\t\t\t* **Name**: ${arg.displayName}" +
-											"\n\t\t\t* **Description**: ${arg.description}" +
-											"\n\t\t\t* **Type**: ${arg.converter.signatureTypeString}\n"
+									arguments += formatArguments(arg, true)
 								}
 
 								if (arguments.isEmpty()) arguments = "None"
@@ -79,9 +79,7 @@ internal object DocsGenerator {
 						} else {
 							var arguments = ""
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
-								arguments += "\t\t* **Name**: ${arg.displayName}" +
-										"\n\t\t* **Description**: ${arg.description}" +
-										"\n\t\t* **Type**: ${arg.converter.signatureTypeString}\n"
+								arguments += formatArguments(arg, false)
 							}
 							if (arguments.isEmpty()) arguments = "None"
 							commandInfo +=
@@ -141,7 +139,7 @@ internal object DocsGenerator {
 				}
 				withContext(Dispatchers.IO) {
 					debugWriter.write("")
-					debugWriter.write("`$contents`")
+					debugWriter.write(contents)
 					debugWriter.flush()
 					debugWriter.close()
 				}
@@ -151,4 +149,25 @@ internal object DocsGenerator {
 			SupportedFileFormat.TEXT -> generateTextContents(commandTypes, loadedExtensions)
 		}
 	}
+
+	private fun formatArguments(arg: Argument<*>, subCommand: Boolean): String =
+		if (subCommand) {
+			"\t\t\t* **Name**: ${arg.displayName}" +
+					"\n\t\t\t* **Description**: ${arg.description}" +
+					"\n\t\t\t* **Type**: ${
+						ConverterFormatter(
+							"${arg.converter}", // I will cry
+							arg.converter.signatureTypeString
+						).formatConverter()
+					}\n"
+		} else {
+			"\t\t* **Name**: ${arg.displayName}" +
+					"\n\t\t* **Description**: ${arg.description}" +
+					"\n\t\t* **Type**: ${
+						ConverterFormatter(
+							"${arg.converter}", // I will cry
+							arg.converter.signatureTypeString
+						).formatConverter()
+					}\n"
+		}
 }

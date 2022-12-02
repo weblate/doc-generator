@@ -1,3 +1,7 @@
+public final class org/hyacinthbots/docgenerator/_docGeneratorKt {
+	public static final fun docsGenerator (Lcom/kotlindiscord/kord/extensions/builders/ExtensibleBotBuilder;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface annotation class org/hyacinthbots/docgenerator/annotations/ConfigurationBuilderDSL : java/lang/annotation/Annotation {
 }
 
@@ -31,10 +35,6 @@ public class org/hyacinthbots/docgenerator/builder/TranslationSupportConfigurati
 	public fun setSupportedLanguages (Ljava/util/List;)V
 }
 
-public final class org/hyacinthbots/docgenerator/builder/_docGeneratorKt {
-	public static final fun docsGenerator (Lcom/kotlindiscord/kord/extensions/builders/ExtensibleBotBuilder;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class org/hyacinthbots/docgenerator/enums/CommandTypes : java/lang/Enum {
 	public static final field MESSAGE Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 	public static final field SLASH Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
@@ -61,6 +61,10 @@ public final class org/hyacinthbots/docgenerator/enums/SupportedFileFormat : jav
 
 public final class org/hyacinthbots/docgenerator/excpetions/ConflictingFileFormatException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/hyacinthbots/docgenerator/excpetions/InvalidConverterException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
 }
 
 public final class org/hyacinthbots/docgenerator/excpetions/InvalidEnvironmentVariableException : java/lang/Exception {
