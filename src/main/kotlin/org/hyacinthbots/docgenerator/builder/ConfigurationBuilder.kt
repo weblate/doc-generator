@@ -22,7 +22,7 @@ public open class ConfigurationBuilder {
 
 	public open lateinit var commandTypes: MutableList<CommandTypes>
 
-	public open lateinit var fileOutputLocation: Path
+	public open lateinit var filePath: Path
 
 	public open lateinit var environment: String
 

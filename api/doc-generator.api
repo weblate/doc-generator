@@ -9,29 +9,29 @@ public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
 	public field commandTypes Ljava/util/List;
 	public field environment Ljava/lang/String;
 	public field fileFormat Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
-	public field fileOutputLocation Ljava/nio/file/Path;
+	public field filePath Ljava/nio/file/Path;
 	public fun <init> ()V
 	public fun getCommandTypes ()Ljava/util/List;
 	public fun getEnabled ()Z
 	public fun getEnvironment ()Ljava/lang/String;
 	public fun getFileFormat ()Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
-	public fun getFileOutputLocation ()Ljava/nio/file/Path;
+	public fun getFilePath ()Ljava/nio/file/Path;
 	public final fun getTranslationSupport ()Lorg/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder;
 	public fun setCommandTypes (Ljava/util/List;)V
 	public fun setEnabled (Z)V
 	public fun setEnvironment (Ljava/lang/String;)V
 	public fun setFileFormat (Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;)V
-	public fun setFileOutputLocation (Ljava/nio/file/Path;)V
+	public fun setFilePath (Ljava/nio/file/Path;)V
 	public final fun translationSupport (Lkotlin/jvm/functions/Function1;)V
 }
 
 public class org/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder {
 	public fun <init> ()V
 	public fun getBaseLanguage ()Ljava/util/Locale;
-	public fun getSupportTranslations ()Z
+	public fun getEnableTranslations ()Z
 	public fun getSupportedLanguages ()Ljava/util/List;
 	public fun setBaseLanguage (Ljava/util/Locale;)V
-	public fun setSupportTranslations (Z)V
+	public fun setEnableTranslations (Z)V
 	public fun setSupportedLanguages (Ljava/util/List;)V
 }
 

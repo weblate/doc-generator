@@ -10,7 +10,9 @@
 package org.hyacinthbots.docgenerator.generator
 
 import com.kotlindiscord.kord.extensions.commands.Argument
+import com.kotlindiscord.kord.extensions.commands.application.message.MessageCommand
 import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
+import com.kotlindiscord.kord.extensions.commands.application.user.UserCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import kotlinx.coroutines.Dispatchers
@@ -130,9 +132,43 @@ internal object DocsGenerator {
 				}
 
 				CommandTypes.MESSAGE -> {
+					val messageCommands: MutableList<MessageCommand<*>> = mutableListOf()
+					loadedExtensions.forEach { extension ->
+						extension.messageCommands.forEach { messageCommands.add(it) }
+					}
+
+					var output = "## Message Commands\n\n"
+
+					for (messageCommand in messageCommands) {
+						val provider = messageCommand.translationsProvider
+						output +=
+							"### ${"header.messagecommand.name".translate(provider, language)
+							}: `${
+								messageCommand.name.translate(provider, language, messageCommand.bundle)
+							}`\n"
+					}
+
+					totalOutput += output
 				}
 
 				CommandTypes.USER -> {
+					val userCommands: MutableList<UserCommand<*>> = mutableListOf()
+					loadedExtensions.forEach { extension ->
+						extension.userCommands.forEach { userCommands.add(it) }
+					}
+
+					var output = "## User Commands\n\n"
+
+					for (userCommand in userCommands) {
+						val provider = userCommand.translationsProvider
+						output +=
+							"### ${"header.usercommand.name".translate(provider, language)
+							}: `${
+								userCommand.name.translate(provider, language, userCommand.bundle)
+							}"
+					}
+
+					totalOutput += output
 				}
 			}
 		}

@@ -46,11 +46,11 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 					}
 
 					DocsGenerator.updateDocumentsFile(
-						action.fileOutputLocation,
+						action.filePath,
 						action.fileFormat,
 						action.commandTypes,
 						extensions.values.toMutableList(),
-						if (action.translationSupport.supportTranslations) action.translationSupport.supportedLanguages else null
+						if (action.translationSupport.enableTranslations) action.translationSupport.supportedLanguages else null
 					)
 				}
 
