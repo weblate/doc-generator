@@ -18,9 +18,12 @@ import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
+import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
+import org.hyacinthbots.docgenerator.generator.DocsGenerator.translate
+import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import java.io.IOException
 import java.nio.file.Path
 import java.util.Locale
@@ -68,19 +71,28 @@ internal object DocsGenerator {
 						var commandInfo = ""
 						val parentProvider = slashCommand.translationsProvider
 						if (slashCommand.subCommands.isNotEmpty()) {
-							commandInfo += "### ${
-								"header.parentcommand.name".translate(parentProvider, language)
-							}: `${
+							val parentAdditionalDocs = slashCommand.additionalDocumentation
+							commandInfo += "### ${"header.parentcommand.name".translate(parentProvider, language)}: `${
 								slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
-							}`\n* **${
-								"header.parentcommand.description".translate(parentProvider, language)
-							}**: ${
+							}`\n* **${"header.parentcommand.description".translate(parentProvider, language)}**: ${
 								slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
-							}\n"
+							}\n${
+								// FIXME why do you not work on translated docs
+								if (language != null && parentAdditionalDocs?.extraInformation != null) {
+									"* **${"header.additionalinfo".translate(parentProvider, language)}**:${
+										parentAdditionalDocs.extraInformation!!.translate(
+											parentProvider, language, slashCommand.bundle
+										)
+									}\n"
+								} else {
+									""
+								}
+							}"
 
 							slashCommand.subCommands.forEach { subCommand ->
 								var arguments = ""
 								val subProvider = subCommand.translationsProvider
+								val subAdditionalDocs = subCommand.subCommandAdditionalDocumentation
 								subCommand.arguments?.invoke()?.args?.forEach { arg ->
 									arguments += formatArguments(
 										arg, true, subProvider, subCommand.bundle, language
@@ -89,40 +101,71 @@ internal object DocsGenerator {
 
 								if (arguments.isEmpty()) arguments = "arguments.none".translate(subProvider, language)
 
-								commandInfo += "\t#### ${
-									"header.subcommand.name".translate(subProvider, language)
-								}: `${
+								commandInfo += "\t#### ${"header.subcommand.name".translate(subProvider, language)}: `${
 									subCommand.name.translate(subProvider, language, subCommand.bundle)
-								}`\n\t* **${
-									"header.subcommand.description".translate(subProvider, language)
-								}**: ${
+								}`\n\t* **${"header.subcommand.description".translate(subProvider, language)}**: ${
 									subCommand.description.translate(subProvider, language, subCommand.bundle)
-								}\n\t\t* **${
-									"header.arguments".translate(subProvider, language)
-								}**:\n$arguments\n"
+								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n${
+									if (language != null && subAdditionalDocs?.commandResult != null) {
+										"* **${"header.result".translate(subProvider, language)}**:${
+											subAdditionalDocs.commandResult!!.translate(
+												subProvider, language, subCommand.bundle
+											)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									if (language != null && subAdditionalDocs?.extraInformation != null) {
+										"* **${"header.additionalinfo".translate(subProvider, language)}**:${
+											subAdditionalDocs.extraInformation!!.translate(
+												subProvider, language, subCommand.bundle
+											)
+										}\n"
+									} else {
+										""
+									}
+								}"
+								subCommand.subCommandAdditionalDocumentation = null
 							}
+							slashCommand.additionalDocumentation = null
 						} else {
 							var arguments = ""
 							val slashProvider = slashCommand.translationsProvider
+							val additionalDocs = slashCommand.additionalDocumentation
+							val bundle = slashCommand.bundle
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 								arguments += formatArguments(
-									arg, false, slashProvider, slashCommand.bundle, language
+									arg, false, slashProvider, bundle, language
 								)
 							}
 							if (arguments.isEmpty()) {
 								arguments = "arguments.none".translate(slashProvider, language)
 							}
 							commandInfo +=
-								"### ${"header.command.name".translate(slashProvider, language)
-								}: `${
-									slashCommand.description.translate(slashProvider, language, slashCommand.bundle)
-								}`\n* ${
-									"header.command.description".translate(slashProvider, language)
-								}: ${
-									slashCommand.description.translate(slashProvider, language, slashCommand.bundle)
-								}\n\t* ${
-									"header.arguments".translate(slashProvider, language)
-								}:\n$arguments\n"
+								"### ${"header.command.name".translate(slashProvider, language)}: `${
+									slashCommand.name.translate(slashProvider, language, bundle)
+								}`\n* ${"header.command.description".translate(slashProvider, language)}: ${
+									slashCommand.description.translate(slashProvider, language, bundle)
+								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n${
+									if (language != null && additionalDocs?.commandResult != null) {
+										"* **${"header.result".translate(slashProvider, language)}**:${
+											additionalDocs.commandResult!!.translate(slashProvider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									if (language != null && additionalDocs?.extraInformation != null) {
+										"* **${"header.additionalinfo".translate(slashProvider, language)}**:${
+											additionalDocs.extraInformation!!.translate(slashProvider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}"
+
+							slashCommand.additionalDocumentation = null
 						}
 
 						output += commandInfo
@@ -140,12 +183,29 @@ internal object DocsGenerator {
 					var output = "## Message Commands\n\n"
 
 					for (messageCommand in messageCommands) {
+						val additionalDocs = messageCommand.additionalDocumentation
 						val provider = messageCommand.translationsProvider
+						val bundle = messageCommand.bundle
 						output +=
-							"### ${"header.messagecommand.name".translate(provider, language)
-							}: `${
-								messageCommand.name.translate(provider, language, messageCommand.bundle)
-							}`\n"
+							"### ${"header.messagecommand.name".translate(provider, language)}: `${
+								messageCommand.name.translate(provider, language, bundle)
+							}`\n${
+								if (language != null && additionalDocs?.commandResult != null) {
+									"* **${"header.result".translate(provider, language)}**:${
+										additionalDocs.commandResult!!.translate(provider, language, bundle)
+									}\n"
+								} else {
+									""
+								}
+							}${
+								if (language != null && additionalDocs?.extraInformation != null) {
+									"* **${"header.additionalinfo".translate(provider, language)}**:${
+										additionalDocs.extraInformation!!.translate(provider, language, bundle)
+									}\n"
+								} else {
+									""
+								}
+							}"
 					}
 
 					totalOutput += output
@@ -160,11 +220,28 @@ internal object DocsGenerator {
 					var output = "## User Commands\n\n"
 
 					for (userCommand in userCommands) {
+						val additionalDocs = userCommand.additionalDocumentation
 						val provider = userCommand.translationsProvider
+						val bundle = userCommand.bundle
 						output +=
-							"### ${"header.usercommand.name".translate(provider, language)
-							}: `${
+							"### ${"header.usercommand.name".translate(provider, language)}: `${
 								userCommand.name.translate(provider, language, userCommand.bundle)
+							}\n${
+								if (language != null && additionalDocs?.commandResult != null) {
+									"* **${"header.result".translate(provider, language)}**:${
+										additionalDocs.commandResult!!.translate(provider, language, bundle)
+									}\n"
+								} else {
+									""
+								}
+							}${
+								if (language != null && additionalDocs?.extraInformation != null) {
+									"* **${"header.additionalinfo".translate(provider, language)}**:${
+										additionalDocs.extraInformation!!.translate(provider, language, bundle)
+									}\n"
+								} else {
+									""
+								}
 							}"
 					}
 
@@ -190,12 +267,27 @@ internal object DocsGenerator {
 		loadedExtensions: MutableList<Extension>,
 		languages: MutableList<Locale>? = null
 	) {
-		findOrCreateDocumentsFile(path)
+		if (!languages.isNullOrEmpty()) {
+			languages.forEach { language ->
+				val i18nPath = Path(path.toString().replace(".md", "-${language.toLanguageTag()}.md"))
+				findOrCreateDocumentsFile(i18nPath)
 
-		if (!path.toFile().canRead()) {
-			throw IOException("Unable to read documents file! Please check the permissions!")
-		} else if (path.toFile().extension != fileFormat.fileExtension) {
-			throw ConflictingFileFormatException(fileFormat.fileExtension, path.toFile().extension)
+				if (!i18nPath.toFile().canRead() || !i18nPath.toFile().canWrite()) {
+					throw IOException(
+						"Unable to read/write documents file for ${language.toLanguageTag()}! Please check the permissions"
+					)
+				} else if (i18nPath.toFile().extension != fileFormat.fileExtension) {
+					throw ConflictingFileFormatException(fileFormat.fileExtension, path.toFile().extension)
+				}
+			}
+		} else {
+			findOrCreateDocumentsFile(path)
+
+			if (!path.toFile().canRead() || !path.toFile().canWrite()) {
+				throw IOException("Unable to read/write documents file! Please check the permissions!")
+			} else if (path.toFile().extension != fileFormat.fileExtension) {
+				throw ConflictingFileFormatException(fileFormat.fileExtension, path.toFile().extension)
+			}
 		}
 
 		@Suppress("OptionalWhenBraces") // How about no

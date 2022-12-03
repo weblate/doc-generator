@@ -1,8 +1,16 @@
+public final class org/hyacinthbots/docgenerator/_docAdditionKt {
+	public static final fun additionalDocumentation (Lcom/kotlindiscord/kord/extensions/commands/application/ApplicationCommand;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun subCommandAdditionalDocumentation (Lcom/kotlindiscord/kord/extensions/commands/application/ApplicationCommand;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class org/hyacinthbots/docgenerator/_docGeneratorKt {
 	public static final fun docsGenerator (Lcom/kotlindiscord/kord/extensions/builders/ExtensibleBotBuilder;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface annotation class org/hyacinthbots/docgenerator/annotations/ConfigurationBuilderDSL : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/hyacinthbots/docgenerator/annotations/DocAdditionBuilderDSL : java/lang/annotation/Annotation {
 }
 
 public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
@@ -23,6 +31,14 @@ public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
 	public fun setFileFormat (Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;)V
 	public fun setFilePath (Ljava/nio/file/Path;)V
 	public final fun translationSupport (Lkotlin/jvm/functions/Function1;)V
+}
+
+public class org/hyacinthbots/docgenerator/builder/DocAdditionBuilder {
+	public fun <init> ()V
+	public fun getCommandResult ()Ljava/lang/String;
+	public fun getExtraInformation ()Ljava/lang/String;
+	public fun setCommandResult (Ljava/lang/String;)V
+	public fun setExtraInformation (Ljava/lang/String;)V
 }
 
 public class org/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder {

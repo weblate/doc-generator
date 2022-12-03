@@ -17,7 +17,7 @@ import org.hyacinthbots.docgenerator.enums.Environment
 import org.hyacinthbots.docgenerator.excpetions.InvalidEnvironmentVariableException
 import org.hyacinthbots.docgenerator.generator.DocsGenerator
 
-internal val dslLogger = KotlinLogging.logger {}
+private val generatorLogger = KotlinLogging.logger {}
 
 @ConfigurationBuilderDSL
 public suspend fun ExtensibleBotBuilder.docsGenerator(
@@ -29,19 +29,19 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 	hooks {
 		afterExtensionsAdded {
 			if (!action.enabled) {
-				dslLogger.debug("Doc generation disabled, not generating!")
+				generatorLogger.debug("Doc generation disabled, not generating!")
 				return@afterExtensionsAdded
 			}
 
 			when (action.environment) {
 				Environment.PRODUCTION.value -> {
-					dslLogger.debug("Production environment detected, not generating!")
+					generatorLogger.debug("Production environment detected, not generating!")
 					return@afterExtensionsAdded
 				}
 
 				Environment.DEVELOPMENT.value -> {
 					if (action.commandTypes.isEmpty()) {
-						dslLogger.error("No command types have been specified! Please specify command types to document")
+						generatorLogger.error("No command types have been specified! Please specify command types to document")
 						return@afterExtensionsAdded
 					}
 

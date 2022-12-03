@@ -331,6 +331,8 @@ style:
     excludeGuardClauses: false
   SpacingBetweenPackageAndImports:
     active: true
+  ThrowsCount:
+    active: false
   TrailingWhitespace:
     active: true
   UnderscoresInNumericLiterals:
