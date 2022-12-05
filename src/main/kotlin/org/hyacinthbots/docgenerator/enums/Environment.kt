@@ -9,6 +9,7 @@
 
 package org.hyacinthbots.docgenerator.enums
 
+// TODO Docs
 public enum class Environment(public val value: String) {
 	DEVELOPMENT("development"),
 	PRODUCTION("production")

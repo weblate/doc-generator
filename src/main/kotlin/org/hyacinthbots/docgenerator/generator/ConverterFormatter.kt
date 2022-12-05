@@ -20,6 +20,7 @@ import java.util.Locale
 private const val STANDARD_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.converters"
 private const val APPLICATION_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.application.slash.converters"
 
+// TODO docs maybe? Internal so idk
 internal class ConverterFormatter(
 	private val converterString: String,
 	private val signatureType: String,

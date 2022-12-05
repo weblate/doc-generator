@@ -14,13 +14,14 @@ import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import java.nio.file.Path
 
+// TODO docs
 @ConfigurationBuilderDSL
 public open class ConfigurationBuilder {
 	public open var enabled: Boolean = false
 
 	public open lateinit var fileFormat: SupportedFileFormat
 
-	public open lateinit var commandTypes: MutableList<CommandTypes>
+	public open lateinit var commandTypes: List<CommandTypes>
 
 	public open lateinit var filePath: Path
 

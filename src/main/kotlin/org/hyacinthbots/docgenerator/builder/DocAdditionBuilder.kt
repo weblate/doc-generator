@@ -11,6 +11,7 @@ package org.hyacinthbots.docgenerator.builder
 
 import org.hyacinthbots.docgenerator.annotations.DocAdditionBuilderDSL
 
+// TODO Docs
 @DocAdditionBuilderDSL
 public open class DocAdditionBuilder {
 	public open var commandResult: String? = null

@@ -9,6 +9,7 @@
 
 package org.hyacinthbots.docgenerator.enums
 
+// TODO docs
 public enum class SupportedFileFormat(public val fileExtension: String) {
 	MARKDOWN("md"),
 	TEXT("txt")

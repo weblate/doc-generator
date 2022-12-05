@@ -13,6 +13,8 @@ import com.kotlindiscord.kord.extensions.commands.application.ApplicationCommand
 import org.hyacinthbots.docgenerator.annotations.DocAdditionBuilderDSL
 import org.hyacinthbots.docgenerator.builder.DocAdditionBuilder
 
+// TODO Docs
+
 @DocAdditionBuilderDSL
 public suspend fun ApplicationCommand<*>.additionalDocumentation(
 	builder: suspend DocAdditionBuilder.() -> Unit

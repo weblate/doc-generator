@@ -31,6 +31,7 @@ import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
+// TODO At least comment some of this code if you don't doc it or people reading it will melt
 internal object DocsGenerator {
 	private val generatorLogger = KotlinLogging.logger { }
 
@@ -49,10 +50,10 @@ internal object DocsGenerator {
 		}
 	}
 
-	// TODO support generating multiple files for each language
+	// TODO Permissions for each command & subcommand
 	private suspend inline fun generateMarkdownContents(
-		commandTypes: MutableList<CommandTypes>,
-		loadedExtensions: MutableList<Extension>,
+		commandTypes: List<CommandTypes>,
+		loadedExtensions: List<Extension>,
 		language: Locale? = null
 	): String {
 		var totalOutput = ""
@@ -251,19 +252,20 @@ internal object DocsGenerator {
 		return totalOutput
 	}
 
+	// TODO I'm going to die making this
 	@Suppress("UnusedPrivateMember", "EmptyFunctionBlock")
 	private suspend inline fun generateTextContents(
-		commandTypes: MutableList<CommandTypes>,
-		loadedExtensions: MutableList<Extension>
+		commandTypes: List<CommandTypes>,
+		loadedExtensions: List<Extension>
 	) {
 	}
 
 	suspend inline fun updateDocumentsFile(
 		path: Path,
 		fileFormat: SupportedFileFormat,
-		commandTypes: MutableList<CommandTypes>,
-		loadedExtensions: MutableList<Extension>,
-		languages: MutableList<Locale>? = null
+		commandTypes: List<CommandTypes>,
+		loadedExtensions: List<Extension>,
+		languages: List<Locale>? = null
 	) {
 		if (!languages.isNullOrEmpty()) {
 			languages.forEach { language ->

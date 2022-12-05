@@ -13,11 +13,12 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import org.hyacinthbots.docgenerator.annotations.ConfigurationBuilderDSL
 import java.util.*
 
+// TODO Docs
 @ConfigurationBuilderDSL
 public open class TranslationSupportConfigurationBuilder {
 	public open var enableTranslations: Boolean = false
 
 	public open var baseLanguage: Locale = SupportedLocales.ENGLISH
 
-	public open var supportedLanguages: MutableList<Locale> = mutableListOf(baseLanguage)
+	public open var supportedLanguages: List<Locale> = listOf(baseLanguage)
 }

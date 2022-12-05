@@ -19,6 +19,7 @@ import org.hyacinthbots.docgenerator.generator.DocsGenerator
 
 private val generatorLogger = KotlinLogging.logger {}
 
+// TODO Docs
 @ConfigurationBuilderDSL
 public suspend fun ExtensibleBotBuilder.docsGenerator(
 	builder: suspend ConfigurationBuilder.() -> Unit

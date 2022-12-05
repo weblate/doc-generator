@@ -9,6 +9,7 @@
 
 package org.hyacinthbots.docgenerator.enums
 
+// TODO Docs
 public enum class CommandTypes {
 	SLASH,
 	MESSAGE,
