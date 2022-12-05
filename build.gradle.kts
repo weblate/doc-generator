@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-library`
     `maven-publish`
-    `java-gradle-plugin`
 
     kotlin("jvm")
 
@@ -40,8 +39,6 @@ dependencies {
 
     implementation(libs.logging)
 
-    api(libs.jetbrains.annotations)
-
     testImplementation(kotlin("test"))
 }
 
@@ -49,15 +46,6 @@ gitHooks {
     setHooks(
         mapOf("pre-commit" to "clean apiCheck updateLicense detekt")
     )
-}
-
-gradlePlugin {
-    plugins {
-        create("doc-generator") {
-            id = "org.hyacinthbots.gradle.docgenerator"
-            implementationClass = "org.hyacinthbots.gradle.docgenerator.GeneratorGradlePlugin"
-        }
-    }
 }
 
 kotlin {

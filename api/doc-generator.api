@@ -87,7 +87,3 @@ public final class org/hyacinthbots/docgenerator/excpetions/InvalidEnvironmentVa
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public class org/hyacinthbots/gradle/docgenerator/GeneratorGradlePlugin {
-	public fun <init> ()V
-}
-
