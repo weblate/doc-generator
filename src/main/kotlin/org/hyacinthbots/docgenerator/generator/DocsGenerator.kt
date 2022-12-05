@@ -25,7 +25,7 @@ import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import java.io.IOException
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createFile
