@@ -19,7 +19,7 @@ public suspend fun ApplicationCommand<*>.additionalDocumentation(
 ) {
 	val action = DocAdditionBuilder()
 	action.builder()
-	additionalDocumentation = action
+	additionalDocumentation[this.name] = action
 }
 
 @DocAdditionBuilderDSL
@@ -28,23 +28,23 @@ public suspend fun ApplicationCommand<*>.subCommandAdditionalDocumentation(
 ) {
 	val action = DocAdditionBuilder()
 	action.builder()
-	subCommandAdditionalDocumentation = action
+	subCommandAdditionalDocumentation[this.name] = action
 }
 
 @Suppress("UnusedReceiverParameter") // My goals are not known to you, mere compiler
-internal var ApplicationCommand<*>.additionalDocumentation: DocAdditionBuilder?
+internal var ApplicationCommand<*>.additionalDocumentation: MutableMap<String, DocAdditionBuilder?>
 	get() = _additionalDocumentation
 	set(value) {
 		_additionalDocumentation = value
 	}
 
 @Suppress("UnusedReceiverParameter")
-internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: DocAdditionBuilder?
+internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?>
 	get() = _subCommandAdditionalDocumentation
 	set(value) {
 		_subCommandAdditionalDocumentation = value
 	}
 
-private var _additionalDocumentation: DocAdditionBuilder? = null // I hate this but it works
+private var _additionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // I hate but it works
 
-private var _subCommandAdditionalDocumentation: DocAdditionBuilder? = null // More hatred
+private var _subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // More hatred

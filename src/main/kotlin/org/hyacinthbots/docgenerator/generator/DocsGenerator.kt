@@ -22,11 +22,10 @@ import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
-import org.hyacinthbots.docgenerator.generator.DocsGenerator.translate
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import java.io.IOException
 import java.nio.file.Path
-import java.util.Locale
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createFile
@@ -57,6 +56,7 @@ internal object DocsGenerator {
 		language: Locale? = null
 	): String {
 		var totalOutput = ""
+		@Suppress("UNUSED_VALUE") // You do not understand
 		commandTypes.forEach { type ->
 			when (type) {
 				CommandTypes.SLASH -> {
@@ -71,16 +71,15 @@ internal object DocsGenerator {
 						var commandInfo = ""
 						val parentProvider = slashCommand.translationsProvider
 						if (slashCommand.subCommands.isNotEmpty()) {
-							val parentAdditionalDocs = slashCommand.additionalDocumentation
+							var parentExtraDocs = slashCommand.additionalDocumentation[slashCommand.name]
 							commandInfo += "### ${"header.parentcommand.name".translate(parentProvider, language)}: `${
 								slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
 							}`\n* **${"header.parentcommand.description".translate(parentProvider, language)}**: ${
 								slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
 							}\n${
-								// FIXME why do you not work on translated docs
-								if (language != null && parentAdditionalDocs?.extraInformation != null) {
-									"* **${"header.additionalinfo".translate(parentProvider, language)}**:${
-										parentAdditionalDocs.extraInformation!!.translate(
+								if (language != null && parentExtraDocs?.extraInformation != null) {
+									"* **${"header.additionalinfo".translate(parentProvider, language)}**: ${
+										parentExtraDocs.extraInformation!!.translate(
 											parentProvider, language, slashCommand.bundle
 										)
 									}\n"
@@ -92,7 +91,8 @@ internal object DocsGenerator {
 							slashCommand.subCommands.forEach { subCommand ->
 								var arguments = ""
 								val subProvider = subCommand.translationsProvider
-								val subAdditionalDocs = subCommand.subCommandAdditionalDocumentation
+								var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
+								val bundle = subCommand.bundle
 								subCommand.arguments?.invoke()?.args?.forEach { arg ->
 									arguments += formatArguments(
 										arg, true, subProvider, subCommand.bundle, language
@@ -102,37 +102,33 @@ internal object DocsGenerator {
 								if (arguments.isEmpty()) arguments = "arguments.none".translate(subProvider, language)
 
 								commandInfo += "\t#### ${"header.subcommand.name".translate(subProvider, language)}: `${
-									subCommand.name.translate(subProvider, language, subCommand.bundle)
+									subCommand.name.translate(subProvider, language, bundle)
 								}`\n\t* **${"header.subcommand.description".translate(subProvider, language)}**: ${
-									subCommand.description.translate(subProvider, language, subCommand.bundle)
-								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n${
-									if (language != null && subAdditionalDocs?.commandResult != null) {
-										"* **${"header.result".translate(subProvider, language)}**:${
-											subAdditionalDocs.commandResult!!.translate(
-												subProvider, language, subCommand.bundle
-											)
+									subCommand.description.translate(subProvider, language, bundle)
+								}\n${
+									if (language != null && subExtraDocs?.commandResult != null) {
+										"\t* **${"header.result".translate(subProvider, language)}**:${
+											subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
 										}\n"
 									} else {
 										""
 									}
 								}${
-									if (language != null && subAdditionalDocs?.extraInformation != null) {
-										"* **${"header.additionalinfo".translate(subProvider, language)}**:${
-											subAdditionalDocs.extraInformation!!.translate(
-												subProvider, language, subCommand.bundle
-											)
+									if (language != null && subExtraDocs?.extraInformation != null) {
+										"\t* **${"header.additionalinfo".translate(subProvider, language)}**:${
+											subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
 										}\n"
 									} else {
 										""
 									}
-								}"
-								subCommand.subCommandAdditionalDocumentation = null
+								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
+								subExtraDocs = null
 							}
-							slashCommand.additionalDocumentation = null
+							parentExtraDocs = null
 						} else {
 							var arguments = ""
 							val slashProvider = slashCommand.translationsProvider
-							val additionalDocs = slashCommand.additionalDocumentation
+							var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
 							val bundle = slashCommand.bundle
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 								arguments += formatArguments(
@@ -147,25 +143,25 @@ internal object DocsGenerator {
 									slashCommand.name.translate(slashProvider, language, bundle)
 								}`\n* ${"header.command.description".translate(slashProvider, language)}: ${
 									slashCommand.description.translate(slashProvider, language, bundle)
-								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n${
-									if (language != null && additionalDocs?.commandResult != null) {
+								}\n${
+									if (language != null && extraDocs?.commandResult != null) {
 										"* **${"header.result".translate(slashProvider, language)}**:${
-											additionalDocs.commandResult!!.translate(slashProvider, language, bundle)
+											extraDocs.commandResult!!.translate(slashProvider, language, bundle)
 										}\n"
 									} else {
 										""
 									}
 								}${
-									if (language != null && additionalDocs?.extraInformation != null) {
+									if (language != null && extraDocs?.extraInformation != null) {
 										"* **${"header.additionalinfo".translate(slashProvider, language)}**:${
-											additionalDocs.extraInformation!!.translate(slashProvider, language, bundle)
+											extraDocs.extraInformation!!.translate(slashProvider, language, bundle)
 										}\n"
 									} else {
 										""
 									}
-								}"
-
-							slashCommand.additionalDocumentation = null
+								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n" +
+										"$arguments\n"
+							extraDocs = null
 						}
 
 						output += commandInfo
@@ -183,7 +179,7 @@ internal object DocsGenerator {
 					var output = "## Message Commands\n\n"
 
 					for (messageCommand in messageCommands) {
-						val additionalDocs = messageCommand.additionalDocumentation
+						var additionalDocs = messageCommand.additionalDocumentation[messageCommand.name]
 						val provider = messageCommand.translationsProvider
 						val bundle = messageCommand.bundle
 						output +=
@@ -206,6 +202,7 @@ internal object DocsGenerator {
 									""
 								}
 							}"
+						additionalDocs = null
 					}
 
 					totalOutput += output
@@ -220,7 +217,7 @@ internal object DocsGenerator {
 					var output = "## User Commands\n\n"
 
 					for (userCommand in userCommands) {
-						val additionalDocs = userCommand.additionalDocumentation
+						var additionalDocs = userCommand.additionalDocumentation[userCommand.name]
 						val provider = userCommand.translationsProvider
 						val bundle = userCommand.bundle
 						output +=
@@ -243,6 +240,7 @@ internal object DocsGenerator {
 									""
 								}
 							}"
+						additionalDocs = null
 					}
 
 					totalOutput += output
