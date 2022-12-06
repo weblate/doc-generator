@@ -14,7 +14,11 @@ import com.kotlindiscord.kord.extensions.commands.application.message.MessageCom
 import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.commands.application.user.UserCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
+import com.kotlindiscord.kord.extensions.utils.translate
+import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Permissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
@@ -160,8 +164,23 @@ internal object DocsGenerator {
 									} else {
 										""
 									}
-								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n" +
-										"$arguments\n"
+								}\n${
+									if (language != null && slashCommand.requiredPerms.isNotEmpty()) {
+										"\t* ${"header.permissions.required".translate(slashProvider, language)}:${
+											slashCommand.requiredPerms.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}\n${
+									if (language != null && slashCommand.defaultMemberPermissions != null) {
+										"\t* ${"header.permissions.default".translate(slashProvider, language)}: ${
+											slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n"
 							extraDocs = null
 						}
 
@@ -384,4 +403,26 @@ internal object DocsGenerator {
 		} else {
 			this
 		}
+
+	internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): MutableSet<String> {
+		val permissionsSet: MutableSet<String> = mutableSetOf()
+		this.forEach {
+			permissionsSet.add(it.translate(language ?: SupportedLocales.ENGLISH))
+		}
+
+		return permissionsSet
+	}
+
+	internal fun Permissions?.formatPermissionsSet(language: Locale?): MutableSet<String>? {
+		this ?: return null
+		val permissionsSet: MutableSet<String> = mutableSetOf()
+
+		this.values.forEach { perm ->
+			permissionsSet.add(
+				Permission.values.find { it.code == perm.code }?.translate(language ?: SupportedLocales.ENGLISH)
+					?: Permission.Unknown().translate(language ?: SupportedLocales.ENGLISH)
+			)
+		}
+		return permissionsSet
+	}
 }
