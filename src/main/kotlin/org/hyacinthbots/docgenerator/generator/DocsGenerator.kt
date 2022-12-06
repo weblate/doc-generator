@@ -26,6 +26,7 @@ import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
+import org.hyacinthbots.docgenerator.generator.DocsGenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import java.io.IOException
 import java.nio.file.Path
@@ -126,6 +127,22 @@ internal object DocsGenerator {
 									} else {
 										""
 									}
+								}${
+									if (language != null && subCommand.requiredPerms.isNotEmpty()) {
+										"\t* ${"header.permissions.required".translate(subProvider, language)}:${
+											subCommand.requiredPerms.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									if (language != null && subCommand.defaultMemberPermissions != null) {
+										"\t* ${"header.permissions.default".translate(subProvider, language)}: ${
+											subCommand.defaultMemberPermissions.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
 								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
 								subExtraDocs = null
 							}
@@ -164,7 +181,7 @@ internal object DocsGenerator {
 									} else {
 										""
 									}
-								}\n${
+								}${
 									if (language != null && slashCommand.requiredPerms.isNotEmpty()) {
 										"\t* ${"header.permissions.required".translate(slashProvider, language)}:${
 											slashCommand.requiredPerms.formatPermissionsSet(language)
@@ -172,7 +189,7 @@ internal object DocsGenerator {
 									} else {
 										""
 									}
-								}\n${
+								}${
 									if (language != null && slashCommand.defaultMemberPermissions != null) {
 										"\t* ${"header.permissions.default".translate(slashProvider, language)}: ${
 											slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
@@ -221,6 +238,22 @@ internal object DocsGenerator {
 								} else {
 									""
 								}
+							}${
+								if (language != null && messageCommand.requiredPerms.isNotEmpty()) {
+									"\t* ${"header.permissions.required".translate(provider, language)}:${
+										messageCommand.requiredPerms.formatPermissionsSet(language)
+									}\n"
+								} else {
+									""
+								}
+							}${
+								if (language != null && messageCommand.defaultMemberPermissions != null) {
+									"\t* ${"header.permissions.default".translate(provider, language)}: ${
+										messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
+									}\n"
+								} else {
+									""
+								}
 							}"
 						additionalDocs = null
 					}
@@ -255,6 +288,22 @@ internal object DocsGenerator {
 								if (language != null && additionalDocs?.extraInformation != null) {
 									"* **${"header.additionalinfo".translate(provider, language)}**:${
 										additionalDocs.extraInformation!!.translate(provider, language, bundle)
+									}\n"
+								} else {
+									""
+								}
+							}${
+								if (language != null && userCommand.requiredPerms.isNotEmpty()) {
+									"\t* ${"header.permissions.required".translate(provider, language)}:${
+										userCommand.requiredPerms.formatPermissionsSet(language)
+									}\n"
+								} else {
+									""
+								}
+							}${
+								if (language != null && userCommand.defaultMemberPermissions != null) {
+									"\t* ${"header.permissions.default".translate(provider, language)}: ${
+										userCommand.defaultMemberPermissions.formatPermissionsSet(language)
 									}\n"
 								} else {
 									""
@@ -413,16 +462,17 @@ internal object DocsGenerator {
 		return permissionsSet
 	}
 
-	internal fun Permissions?.formatPermissionsSet(language: Locale?): MutableSet<String>? {
+	internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
 		this ?: return null
 		val permissionsSet: MutableSet<String> = mutableSetOf()
 
 		this.values.forEach { perm ->
 			permissionsSet.add(
-				Permission.values.find { it.code == perm.code }?.translate(language ?: SupportedLocales.ENGLISH)
+				Permission.values.find { it.code.value == perm.code.value }
+					?.translate(language ?: SupportedLocales.ENGLISH)
 					?: Permission.Unknown().translate(language ?: SupportedLocales.ENGLISH)
 			)
 		}
-		return permissionsSet
+		return permissionsSet.toString().replace("[", "").replace("]", "")
 	}
 }
