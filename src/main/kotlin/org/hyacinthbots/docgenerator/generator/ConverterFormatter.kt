@@ -16,7 +16,7 @@ import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import org.hyacinthbots.docgenerator.DEFAULT_BUNDLE_NAME
 import org.hyacinthbots.docgenerator.excpetions.InvalidConverterException
 import org.hyacinthbots.docgenerator.translate
-import java.util.*
+import java.util.Locale
 
 private const val STANDARD_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.converters"
 private const val APPLICATION_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.application.slash.converters"

@@ -21,7 +21,7 @@ import org.hyacinthbots.docgenerator.generator.ConverterFormatter
 import org.hyacinthbots.docgenerator.generator.DocsGenerator
 import java.io.IOException
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
