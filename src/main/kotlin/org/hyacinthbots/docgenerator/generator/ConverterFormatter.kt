@@ -13,9 +13,10 @@ import com.kotlindiscord.kord.extensions.i18n.ResourceBundleTranslations
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
+import org.hyacinthbots.docgenerator.DEFAULT_BUNDLE_NAME
 import org.hyacinthbots.docgenerator.excpetions.InvalidConverterException
-import org.hyacinthbots.docgenerator.generator.DocsGenerator.translate
-import java.util.Locale
+import org.hyacinthbots.docgenerator.translate
+import java.util.*
 
 private const val STANDARD_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.converters"
 private const val APPLICATION_PREFIX: String = "com.kotlindiscord.kord.extensions.commands.application.slash.converters"
@@ -80,26 +81,26 @@ internal class ConverterFormatter(
 	)
 
 	private val signatureToType: Map<String, String> = mapOf(
-		"attachment" to translationsProvider.translate("signature.attachment", bundleName = "doc-generator"),
-		"yes/no" to translationsProvider.translate("signature.boolean", bundleName = "doc-generator"),
-		"channel" to translationsProvider.translate("signature.channel", bundleName = "doc-generator"),
-		"color" to translationsProvider.translate("signature.color", bundleName = "doc-generator"),
-		"decimal" to translationsProvider.translate("signature.decimal", bundleName = "doc-generator"),
-		"duration" to translationsProvider.translate("signature.duration", bundleName = "doc-generator"),
-		"email" to translationsProvider.translate("signature.email", bundleName = "doc-generator"),
-		"server emoji" to translationsProvider.translate("signature.emoji", bundleName = "doc-generator"),
-		"server" to translationsProvider.translate("signature.server", bundleName = "doc-generator"),
-		"number" to translationsProvider.translate("signature.number", bundleName = "doc-generator"),
-		"member" to translationsProvider.translate("signature.member", bundleName = "doc-generator"),
-		"message" to translationsProvider.translate("signature.message", bundleName = "doc-generator"),
-		"regex" to translationsProvider.translate("signature.regex", bundleName = "doc-generator"),
-		"regexes" to translationsProvider.translate("signature.regexes", bundleName = "doc-generator"),
-		"role" to translationsProvider.translate("signature.role", bundleName = "doc-generator"),
-		"ID" to translationsProvider.translate("signature.snowflake", bundleName = "doc-generator"),
-		"text" to translationsProvider.translate("signature.string", bundleName = "doc-generator"),
-		"locale name/code" to translationsProvider.translate("signature.locale", bundleName = "doc-generator"),
-		"timestamp" to translationsProvider.translate("signature.timestamp", bundleName = "doc-generator"),
-		"user" to translationsProvider.translate("signature.user", bundleName = "doc-generator")
+		"attachment" to translationsProvider.translate("signature.attachment", bundleName = DEFAULT_BUNDLE_NAME),
+		"yes/no" to translationsProvider.translate("signature.boolean", bundleName = DEFAULT_BUNDLE_NAME),
+		"channel" to translationsProvider.translate("signature.channel", bundleName = DEFAULT_BUNDLE_NAME),
+		"color" to translationsProvider.translate("signature.color", bundleName = DEFAULT_BUNDLE_NAME),
+		"decimal" to translationsProvider.translate("signature.decimal", bundleName = DEFAULT_BUNDLE_NAME),
+		"duration" to translationsProvider.translate("signature.duration", bundleName = DEFAULT_BUNDLE_NAME),
+		"email" to translationsProvider.translate("signature.email", bundleName = DEFAULT_BUNDLE_NAME),
+		"server emoji" to translationsProvider.translate("signature.emoji", bundleName = DEFAULT_BUNDLE_NAME),
+		"server" to translationsProvider.translate("signature.server", bundleName = DEFAULT_BUNDLE_NAME),
+		"number" to translationsProvider.translate("signature.number", bundleName = DEFAULT_BUNDLE_NAME),
+		"member" to translationsProvider.translate("signature.member", bundleName = DEFAULT_BUNDLE_NAME),
+		"message" to translationsProvider.translate("signature.message", bundleName = DEFAULT_BUNDLE_NAME),
+		"regex" to translationsProvider.translate("signature.regex", bundleName = DEFAULT_BUNDLE_NAME),
+		"regexes" to translationsProvider.translate("signature.regexes", bundleName = DEFAULT_BUNDLE_NAME),
+		"role" to translationsProvider.translate("signature.role", bundleName = DEFAULT_BUNDLE_NAME),
+		"ID" to translationsProvider.translate("signature.snowflake", bundleName = DEFAULT_BUNDLE_NAME),
+		"text" to translationsProvider.translate("signature.string", bundleName = DEFAULT_BUNDLE_NAME),
+		"locale name/code" to translationsProvider.translate("signature.locale", bundleName = DEFAULT_BUNDLE_NAME),
+		"timestamp" to translationsProvider.translate("signature.timestamp", bundleName = DEFAULT_BUNDLE_NAME),
+		"user" to translationsProvider.translate("signature.user", bundleName = DEFAULT_BUNDLE_NAME)
 	)
 
 	fun formatConverter(language: Locale? = null): String {
@@ -110,7 +111,7 @@ internal class ConverterFormatter(
 		} else {
 			"${nonObviousConverterMap[cleanConverterString]} ${
 				(signatureToType[translatedSignatureType] ?: signatureType).translate(
-					translationsProvider, language, "doc-generator"
+					translationsProvider, language, DEFAULT_BUNDLE_NAME
 				)
 			}"
 		}

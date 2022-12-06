@@ -9,16 +9,10 @@
 
 package org.hyacinthbots.docgenerator.generator
 
-import com.kotlindiscord.kord.extensions.commands.Argument
 import com.kotlindiscord.kord.extensions.commands.application.message.MessageCommand
 import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.commands.application.user.UserCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
-import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
-import com.kotlindiscord.kord.extensions.utils.translate
-import dev.kord.common.entity.Permission
-import dev.kord.common.entity.Permissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
@@ -26,34 +20,20 @@ import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
-import org.hyacinthbots.docgenerator.generator.DocsGenerator.formatPermissionsSet
+import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
+import org.hyacinthbots.docgenerator.formatArguments
+import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
+import org.hyacinthbots.docgenerator.translate
 import java.io.IOException
 import java.nio.file.Path
-import java.util.Locale
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
 
 // TODO At least comment some of this code if you don't doc it or people reading it will melt
 internal object DocsGenerator {
-	private val generatorLogger = KotlinLogging.logger { }
-
-	private suspend inline fun findOrCreateDocumentsFile(path: Path) {
-		if (!path.exists()) {
-			generatorLogger.debug("File does not exist, creating...")
-			try {
-				withContext(Dispatchers.IO) {
-					path.createFile()
-				}
-			} catch (e: IOException) {
-				generatorLogger.error(e) { e.message }
-				return
-			}
-			generatorLogger.debug("File created successfully...")
-		}
-	}
+	internal val generatorLogger = KotlinLogging.logger { }
 
 	// TODO Permissions for each command & subcommand
 	private suspend inline fun generateMarkdownContents(
@@ -389,90 +369,5 @@ internal object DocsGenerator {
 
 			SupportedFileFormat.TEXT -> generateTextContents(commandTypes, loadedExtensions) // TODO funni translations
 		}
-	}
-
-	private fun formatArguments(
-		arg: Argument<*>,
-		subCommand: Boolean,
-		translationsProvider: TranslationsProvider,
-		bundle: String?,
-		language: Locale?
-	): String =
-		if (subCommand) {
-			"\t\t\t* **${"header.arguments.name".translate(translationsProvider, language)}**: " +
-					"${arg.displayName.translate(translationsProvider, language, bundle)}\n" +
-
-					"\t\t\t* **${"header.arguments.description".translate(translationsProvider, language)}**: " +
-					"${arg.description.translate(translationsProvider, language, bundle)}\n" +
-
-					"\t\t\t* **${"header.arguments.type".translate(translationsProvider, language)}**: ${
-						if (language != null) {
-							ConverterFormatter(
-								"${arg.converter}", // I will cry
-								arg.converter.signatureTypeString,
-								language
-							).formatConverter(language)
-						} else {
-							ConverterFormatter(
-								"${arg.converter}", // I will cry
-								arg.converter.signatureTypeString
-							).formatConverter()
-						}
-					}\n"
-		} else {
-			"\t\t* **${"header.arguments.name".translate(translationsProvider, language)}**: " +
-					"${arg.displayName.translate(translationsProvider, language, bundle)}\n" +
-
-					"\t\t* **${"header.arguments.description".translate(translationsProvider, language)}**: " +
-					"${arg.description.translate(translationsProvider, language, bundle)}\n" +
-
-					"\t\t* **${"header.arguments.type".translate(translationsProvider, language)}**: ${
-						if (language != null) {
-							ConverterFormatter(
-								"${arg.converter}", // I will cry
-								arg.converter.signatureTypeString,
-								language
-							).formatConverter(language)
-						} else {
-							ConverterFormatter(
-								"${arg.converter}", // I will cry
-								arg.converter.signatureTypeString
-							).formatConverter()
-						}
-					}\n"
-		}
-
-	internal fun String.translate(
-		provider: TranslationsProvider,
-		language: Locale?,
-		bundle: String? = "doc-generator"
-	): String =
-		if (language != null) {
-			provider.translate(this, language, bundle)
-		} else {
-			this
-		}
-
-	internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): MutableSet<String> {
-		val permissionsSet: MutableSet<String> = mutableSetOf()
-		this.forEach {
-			permissionsSet.add(it.translate(language ?: SupportedLocales.ENGLISH))
-		}
-
-		return permissionsSet
-	}
-
-	internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
-		this ?: return null
-		val permissionsSet: MutableSet<String> = mutableSetOf()
-
-		this.values.forEach { perm ->
-			permissionsSet.add(
-				Permission.values.find { it.code.value == perm.code.value }
-					?.translate(language ?: SupportedLocales.ENGLISH)
-					?: Permission.Unknown().translate(language ?: SupportedLocales.ENGLISH)
-			)
-		}
-		return permissionsSet.toString().replace("[", "").replace("]", "")
 	}
 }
