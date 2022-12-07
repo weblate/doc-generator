@@ -109,7 +109,7 @@ internal object DocsGenerator {
 									}
 								}${
 									if (language != null && subCommand.requiredPerms.isNotEmpty()) {
-										"\t* ${"header.permissions.required".translate(subProvider, language)}:${
+										"\t* ${"header.permissions.bot".translate(subProvider, language)}:${
 											subCommand.requiredPerms.formatPermissionsSet(language)
 										}\n"
 									} else {
@@ -117,7 +117,7 @@ internal object DocsGenerator {
 									}
 								}${
 									if (language != null && subCommand.defaultMemberPermissions != null) {
-										"\t* ${"header.permissions.default".translate(subProvider, language)}: ${
+										"\t* ${"header.permissions.member".translate(subProvider, language)}: ${
 											subCommand.defaultMemberPermissions.formatPermissionsSet(language)
 										}\n"
 									} else {

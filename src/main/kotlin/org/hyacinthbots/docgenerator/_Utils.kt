@@ -51,13 +51,13 @@ internal fun String.translate(
 		this
 	}
 
-internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): MutableSet<String> {
+internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): String {
 	val permissionsSet: MutableSet<String> = mutableSetOf()
 	this.forEach {
 		permissionsSet.add(it.translate(language ?: SupportedLocales.ENGLISH))
 	}
 
-	return permissionsSet
+	return permissionsSet.toString().replace("[", "").replace("]", "")
 }
 
 internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
