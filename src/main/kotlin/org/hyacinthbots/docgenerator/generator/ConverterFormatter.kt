@@ -131,6 +131,8 @@ internal class ConverterFormatter(
 	 * Formats the converter provided to a readable string, making use of the convert maps.
 	 *
 	 * @param language The [Locale] to translate the converters into
+	 *
+	 * @return The converter information formatted as a [String] and localised if necessary
 	 */
 	fun formatConverter(language: Locale? = null): String {
 		val translatedSignatureType = translationsProvider.translate(signatureType, SupportedLocales.ENGLISH)
