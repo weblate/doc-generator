@@ -9,6 +9,9 @@
 
 package org.hyacinthbots.docgenerator.excpetions
 
+/**
+ * Exception thrown when a converter read from a command is not known.
+ */
 public class InvalidConverterException(converter: String) : Exception(
 	"Invalid/Unsupported converter type: $converter. Please report this to the developers."
 )

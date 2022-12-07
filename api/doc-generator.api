@@ -24,7 +24,7 @@ public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
 	public fun getEnvironment ()Ljava/lang/String;
 	public fun getFileFormat ()Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 	public fun getFilePath ()Ljava/nio/file/Path;
-	public final fun getTranslationSupport ()Lorg/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder;
+	public final fun getTranslationSupport ()Lorg/hyacinthbots/docgenerator/builder/TranslationSupportBuilder;
 	public fun setCommandTypes (Ljava/util/List;)V
 	public fun setEnabled (Z)V
 	public fun setEnvironment (Ljava/lang/String;)V
@@ -41,12 +41,10 @@ public class org/hyacinthbots/docgenerator/builder/DocAdditionBuilder {
 	public fun setExtraInformation (Ljava/lang/String;)V
 }
 
-public class org/hyacinthbots/docgenerator/builder/TranslationSupportConfigurationBuilder {
+public class org/hyacinthbots/docgenerator/builder/TranslationSupportBuilder {
 	public fun <init> ()V
-	public fun getBaseLanguage ()Ljava/util/Locale;
 	public fun getEnableTranslations ()Z
 	public fun getSupportedLanguages ()Ljava/util/List;
-	public fun setBaseLanguage (Ljava/util/Locale;)V
 	public fun setEnableTranslations (Z)V
 	public fun setSupportedLanguages (Ljava/util/List;)V
 }
@@ -69,7 +67,6 @@ public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/E
 
 public final class org/hyacinthbots/docgenerator/enums/SupportedFileFormat : java/lang/Enum {
 	public static final field MARKDOWN Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
-	public static final field TEXT Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 	public final fun getFileExtension ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;

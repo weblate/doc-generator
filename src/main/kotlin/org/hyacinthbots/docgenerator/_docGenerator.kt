@@ -19,7 +19,11 @@ import org.hyacinthbots.docgenerator.generator.DocsGenerator
 
 private val generatorLogger = KotlinLogging.logger {}
 
-// TODO Docs
+/**
+ * DSL for configuring the options of doc-generator.
+ *
+ * @see ConfigurationBuilder
+ */
 @ConfigurationBuilderDSL
 public suspend fun ExtensibleBotBuilder.docsGenerator(
 	builder: suspend ConfigurationBuilder.() -> Unit
@@ -34,7 +38,7 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 				return@afterExtensionsAdded
 			}
 
-			when (action.environment) {
+			when (action.environment.lowercase()) {
 				Environment.PRODUCTION.value -> {
 					generatorLogger.debug("Production environment detected, not generating!")
 					return@afterExtensionsAdded

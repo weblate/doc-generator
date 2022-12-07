@@ -25,6 +25,11 @@ import java.util.Locale
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
+/**
+ * Searches for the target [path] and either finds it, creates it or complains.
+ *
+ * @param path The path to search
+ */
 internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
 	if (!path.exists()) {
 		DocsGenerator.generatorLogger.debug("File does not exist, creating...")
@@ -40,17 +45,27 @@ internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
 	}
 }
 
+/**
+ * Extension function for translating strings to a language.
+ *
+ * @param provider The translation provider
+ * @param language The [Locale] to translate into
+ * @param bundle The bundle that has the translation, `doc-generator` by default
+ */
 internal fun String.translate(
 	provider: TranslationsProvider,
 	language: Locale?,
 	bundle: String? = DEFAULT_BUNDLE_NAME
 ): String =
-	if (language != null) {
-		provider.translate(this, language, bundle)
-	} else {
-		this
-	}
+	provider.translate(this, language ?: SupportedLocales.ENGLISH, bundle)
 
+/**
+ * Extension function for formatting a [MutableSet] of [Permission]s into a string, possible localised if necessary.
+ *
+ * @param language The [Locale] to translate into
+ *
+ * @return A [String] list of the required permissions
+ */
 internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): String {
 	val permissionsSet: MutableSet<String> = mutableSetOf()
 	this.forEach {
@@ -60,6 +75,13 @@ internal fun MutableSet<Permission>.formatPermissionsSet(language: Locale?): Str
 	return permissionsSet.toString().replace("[", "").replace("]", "")
 }
 
+/**
+ * Extension function for formatting [Permissions] into a string, possibly localised if necessary.
+ *
+ * @param language The [Locale] to translate into
+ *
+ * @return A [String] list of the required permissions, or null if there are non
+ */
 internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
 	this ?: return null
 	val permissionsSet: MutableSet<String> = mutableSetOf()
@@ -74,6 +96,15 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
 	return permissionsSet.toString().replace("[", "").replace("]", "")
 }
 
+/**
+ * function for formatting the arguments of a command into a nice string.
+ *
+ * @param arg The argument to translate
+ * @param subCommand Whether this is part of a subcommand or not
+ * @param provider The translation provider
+ * @param bundle The bundle to get the translations from
+ * @param language the [Locale] to translate into
+ */
 internal fun formatArguments(
 	arg: Argument<*>,
     subCommand: Boolean,
@@ -81,6 +112,7 @@ internal fun formatArguments(
     bundle: String?,
     language: Locale?
 ): String =
+	// Sub commands require and extra tab of indentation
 	if (subCommand) {
 		"\t\t\t* **${"header.arguments.name".translate(provider, language)}**: " +
 				"${arg.displayName.translate(provider, language, bundle)}\n" +
@@ -119,4 +151,5 @@ internal fun formatArguments(
 				}\n"
 	}
 
+/** The name of the bundle containing this projects translations. */
 internal const val DEFAULT_BUNDLE_NAME = "doc-generator"

@@ -9,8 +9,10 @@
 
 package org.hyacinthbots.docgenerator.enums
 
-// TODO docs
+// TODO Support more file formats
+/**
+ * Enumeration containing the current supported file formats for documents.
+ */
 public enum class SupportedFileFormat(public val fileExtension: String) {
 	MARKDOWN("md"),
-	TEXT("txt")
 }

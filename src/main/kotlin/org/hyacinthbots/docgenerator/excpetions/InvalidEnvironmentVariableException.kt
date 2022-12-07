@@ -9,6 +9,9 @@
 
 package org.hyacinthbots.docgenerator.excpetions
 
+/**
+ * Exception thrown when an environment variable is not recognised.
+ */
 public class InvalidEnvironmentVariableException(variable: String, value: String) : Exception(
 	"Unknown/unsupported value: $value for environment variable: $variable "
 )

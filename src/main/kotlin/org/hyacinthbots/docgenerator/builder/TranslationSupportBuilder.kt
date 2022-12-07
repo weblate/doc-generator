@@ -9,16 +9,21 @@
 
 package org.hyacinthbots.docgenerator.builder
 
-import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import org.hyacinthbots.docgenerator.annotations.ConfigurationBuilderDSL
-import java.util.*
+import java.util.Locale
 
-// TODO Docs
+/**
+ * Builder class for configuring the translation support.
+ */
 @ConfigurationBuilderDSL
-public open class TranslationSupportConfigurationBuilder {
+public open class TranslationSupportBuilder {
+	/**
+	 * Whether to enable translations.
+	 */
 	public open var enableTranslations: Boolean = false
 
-	public open var baseLanguage: Locale = SupportedLocales.ENGLISH
-
-	public open var supportedLanguages: List<Locale> = listOf(baseLanguage)
+	/**
+	 * The languages to support. Defaults to English.
+	 */
+	public open var supportedLanguages: List<Locale> = emptyList()
 }

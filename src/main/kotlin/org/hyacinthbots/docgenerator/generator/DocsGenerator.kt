@@ -13,6 +13,8 @@ import com.kotlindiscord.kord.extensions.commands.application.message.MessageCom
 import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.commands.application.user.UserCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
+import com.kotlindiscord.kord.extensions.i18n.ResourceBundleTranslations
+import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
@@ -31,39 +33,57 @@ import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 
-// TODO At least comment some of this code if you don't doc it or people reading it will melt
+/**
+ * The object that contains the document generation functions.
+ */
 internal object DocsGenerator {
 	internal val generatorLogger = KotlinLogging.logger { }
 
-	// TODO Permissions for each command & subcommand
-	private suspend inline fun generateMarkdownContents(
+	/**
+	 * This function generates the contents of the markdown docs format.
+	 *
+	 * @param commandTypes A [List] of [CommandTypes] to document
+	 * @param loadedExtensions A [List] of loaded [Extension]s from the bot
+	 * @param language The [Locale] to translate into, or null
+	 *
+	 * @return A [String] containing all the documents
+	 */
+	private fun generateMarkdownContents(
 		commandTypes: List<CommandTypes>,
 		loadedExtensions: List<Extension>,
 		language: Locale? = null
 	): String {
 		var totalOutput = ""
+		val externalTranslationsProvider = ResourceBundleTranslations { language ?: SupportedLocales.ENGLISH }
 		@Suppress("UNUSED_VALUE") // You do not understand
 		commandTypes.forEach { type ->
 			when (type) {
 				CommandTypes.SLASH -> {
+					// Gather a list of slash commands from the loaded extensions
 					val slashCommands: MutableList<SlashCommand<*, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
-						extension.slashCommands.forEach { slashCommands.add(it) }
+						slashCommands.addAll(extension.slashCommands)
 					}
 
-					var output = "## Slash Commands\n\n"
+					// Set a variable for the output
+					var output = "## ${"title.slash".translate(externalTranslationsProvider, language)}\n\n"
 
+					// Iterate through the list of slash commands we gathered
 					for (slashCommand in slashCommands) {
-						var commandInfo = ""
-						val parentProvider = slashCommand.translationsProvider
+						var commandInfo = "" // The eventual output of this particular slash command
+						val parentProvider = slashCommand.translationsProvider // Quick variable to allow for inlining
+						// If the slash command list is not empty, format the documents with sub command info
 						if (slashCommand.subCommands.isNotEmpty()) {
+							// Collect the extra docs from its reference in the map, if there is one
 							var parentExtraDocs = slashCommand.additionalDocumentation[slashCommand.name]
+							// Add the description and name of the command
 							commandInfo += "### ${"header.parentcommand.name".translate(parentProvider, language)}: `${
 								slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
 							}`\n* **${"header.parentcommand.description".translate(parentProvider, language)}**: ${
 								slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
 							}\n${
-								if (language != null && parentExtraDocs?.extraInformation != null) {
+								// If there is some extra information, add it to the parent command, or just leave blank
+								if (parentExtraDocs?.extraInformation != null) {
 									"* **${"header.additionalinfo".translate(parentProvider, language)}**: ${
 										parentExtraDocs.extraInformation!!.translate(
 											parentProvider, language, slashCommand.bundle
@@ -74,25 +94,32 @@ internal object DocsGenerator {
 								}
 							}"
 
+							// For each sub command in the list, format it and add arguments
 							slashCommand.subCommands.forEach { subCommand ->
 								var arguments = ""
-								val subProvider = subCommand.translationsProvider
+								val subProvider = subCommand.translationsProvider // Quick variable to allow for inlining
+								// Get any additional documentation from the map
 								var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
 								val bundle = subCommand.bundle
+
+								// Format each argument in a nice way to read
 								subCommand.arguments?.invoke()?.args?.forEach { arg ->
 									arguments += formatArguments(
 										arg, true, subProvider, subCommand.bundle, language
 									)
 								}
 
+								// If the arguments list is empty, acknowledge it
 								if (arguments.isEmpty()) arguments = "arguments.none".translate(subProvider, language)
 
+								// Add the title and description of the sub command
 								commandInfo += "\t#### ${"header.subcommand.name".translate(subProvider, language)}: `${
 									subCommand.name.translate(subProvider, language, bundle)
 								}`\n\t* **${"header.subcommand.description".translate(subProvider, language)}**: ${
 									subCommand.description.translate(subProvider, language, bundle)
 								}\n${
-									if (language != null && subExtraDocs?.commandResult != null) {
+									// Add the result of the command, if one was provided
+									if (subExtraDocs?.commandResult != null) {
 										"\t* **${"header.result".translate(subProvider, language)}**:${
 											subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
 										}\n"
@@ -100,7 +127,8 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									if (language != null && subExtraDocs?.extraInformation != null) {
+									// Add the additional info, if there was any provided
+									if (subExtraDocs?.extraInformation != null) {
 										"\t* **${"header.additionalinfo".translate(subProvider, language)}**:${
 											subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
 										}\n"
@@ -108,7 +136,8 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									if (language != null && subCommand.requiredPerms.isNotEmpty()) {
+									// Add any required bot perms to the document
+									if (subCommand.requiredPerms.isNotEmpty()) {
 										"\t* ${"header.permissions.bot".translate(subProvider, language)}:${
 											subCommand.requiredPerms.formatPermissionsSet(language)
 										}\n"
@@ -116,37 +145,47 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									if (language != null && subCommand.defaultMemberPermissions != null) {
+									// Add any required member perms to the document
+									if (subCommand.defaultMemberPermissions != null) {
 										"\t* ${"header.permissions.member".translate(subProvider, language)}: ${
 											subCommand.defaultMemberPermissions.formatPermissionsSet(language)
 										}\n"
 									} else {
 										""
 									}
+									// Actually add the arguments
 								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
-								subExtraDocs = null
+								subExtraDocs = null // Reset the extra docs to get the new ones on the next loop
 							}
-							parentExtraDocs = null
+							parentExtraDocs = null // Reset the parent extra docs to get the new ones in the next loop
 						} else {
 							var arguments = ""
-							val slashProvider = slashCommand.translationsProvider
+							val slashProvider = slashCommand.translationsProvider // Quick variable to allow for inlining
+							// Get the extra documents for the command from the map, if there are any
 							var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
+							// Quick variable to allow for inlining
 							val bundle = slashCommand.bundle
+							// Loop through the arguments and format me
 							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 								arguments += formatArguments(
 									arg, false, slashProvider, bundle, language
 								)
 							}
+
+							// If there are no arguments, acknowledge it
 							if (arguments.isEmpty()) {
 								arguments = "arguments.none".translate(slashProvider, language)
 							}
+
+							// Add the name and description to the doc
 							commandInfo +=
 								"### ${"header.command.name".translate(slashProvider, language)}: `${
 									slashCommand.name.translate(slashProvider, language, bundle)
 								}`\n* ${"header.command.description".translate(slashProvider, language)}: ${
 									slashCommand.description.translate(slashProvider, language, bundle)
 								}\n${
-									if (language != null && extraDocs?.commandResult != null) {
+									// Add the result of the command if there is one
+									if (extraDocs?.commandResult != null) {
 										"* **${"header.result".translate(slashProvider, language)}**:${
 											extraDocs.commandResult!!.translate(slashProvider, language, bundle)
 										}\n"
@@ -154,7 +193,8 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									if (language != null && extraDocs?.extraInformation != null) {
+									// Add the extra information if there is any
+									if (extraDocs?.extraInformation != null) {
 										"* **${"header.additionalinfo".translate(slashProvider, language)}**:${
 											extraDocs.extraInformation!!.translate(slashProvider, language, bundle)
 										}\n"
@@ -162,48 +202,56 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									if (language != null && slashCommand.requiredPerms.isNotEmpty()) {
-										"\t* ${"header.permissions.required".translate(slashProvider, language)}:${
+									// Add the required bot permissions if there are any
+									if (slashCommand.requiredPerms.isNotEmpty()) {
+										"\t* ${"header.permissions.bot".translate(slashProvider, language)}:${
 											slashCommand.requiredPerms.formatPermissionsSet(language)
 										}\n"
 									} else {
 										""
 									}
 								}${
-									if (language != null && slashCommand.defaultMemberPermissions != null) {
-										"\t* ${"header.permissions.default".translate(slashProvider, language)}: ${
+									// Add the required member permissions if there are any
+									if (slashCommand.defaultMemberPermissions != null) {
+										"\t* ${"header.permissions.member".translate(slashProvider, language)}: ${
 											slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
 										}\n"
 									} else {
 										""
 									}
+									// Add the arguments
 								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n"
-							extraDocs = null
+							extraDocs = null // Reset the extra documents for it to be gotten in the next loop
 						}
 
-						output += commandInfo
+						output += commandInfo // Add the command info to the output
 					}
 
-					totalOutput += output
+					totalOutput += output // Add the slash info to the total output
 				}
 
 				CommandTypes.MESSAGE -> {
+					// Collect all the message commands into a list from the loaded extensions
 					val messageCommands: MutableList<MessageCommand<*>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
-						extension.messageCommands.forEach { messageCommands.add(it) }
+						messageCommands.addAll(extension.messageCommands)
 					}
 
-					var output = "## Message Commands\n\n"
+					var output = "## ${"title.message".translate(externalTranslationsProvider, language)}\n\n"
 
+					// Loop through the collected message commands
 					for (messageCommand in messageCommands) {
+						// Get the additional docs from the map, if there are any
 						var additionalDocs = messageCommand.additionalDocumentation[messageCommand.name]
-						val provider = messageCommand.translationsProvider
-						val bundle = messageCommand.bundle
+						val provider = messageCommand.translationsProvider // Quick variable to help inlining
+						val bundle = messageCommand.bundle // Quick variable to help inlining
 						output +=
+							// Add the name of the command to the list. Message commands have no description :(
 							"### ${"header.messagecommand.name".translate(provider, language)}: `${
 								messageCommand.name.translate(provider, language, bundle)
 							}`\n${
-								if (language != null && additionalDocs?.commandResult != null) {
+								// Add the provided command result, if there is one
+								if (additionalDocs?.commandResult != null) {
 									"* **${"header.result".translate(provider, language)}**:${
 										additionalDocs.commandResult!!.translate(provider, language, bundle)
 									}\n"
@@ -211,7 +259,8 @@ internal object DocsGenerator {
 									""
 								}
 							}${
-								if (language != null && additionalDocs?.extraInformation != null) {
+								// Add the provided extra info if there is any
+								if (additionalDocs?.extraInformation != null) {
 									"* **${"header.additionalinfo".translate(provider, language)}**:${
 										additionalDocs.extraInformation!!.translate(provider, language, bundle)
 									}\n"
@@ -219,45 +268,52 @@ internal object DocsGenerator {
 									""
 								}
 							}${
-								if (language != null && messageCommand.requiredPerms.isNotEmpty()) {
-									"\t* ${"header.permissions.required".translate(provider, language)}:${
+								// Add the required bot perms, if there are any
+								if (messageCommand.requiredPerms.isNotEmpty()) {
+									"\t* ${"header.permissions.bot".translate(provider, language)}:${
 										messageCommand.requiredPerms.formatPermissionsSet(language)
 									}\n"
 								} else {
 									""
 								}
 							}${
-								if (language != null && messageCommand.defaultMemberPermissions != null) {
-									"\t* ${"header.permissions.default".translate(provider, language)}: ${
+								// Add the required memeber permissions, if there are any
+								if (messageCommand.defaultMemberPermissions != null) {
+									"\t* ${"header.permissions.member".translate(provider, language)}: ${
 										messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
 									}\n"
 								} else {
 									""
 								}
 							}"
-						additionalDocs = null
+						additionalDocs = null // Reset the additional docs for next time
 					}
 
-					totalOutput += output
+					totalOutput += output // Add message commands to the total output
 				}
 
 				CommandTypes.USER -> {
+					// Collect the user commands into a list
 					val userCommands: MutableList<UserCommand<*>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
-						extension.userCommands.forEach { userCommands.add(it) }
+						userCommands.addAll(extension.userCommands)
 					}
 
-					var output = "## User Commands\n\n"
+					var output = "## ${"title.user".translate(externalTranslationsProvider, language)}\n\n"
 
+					// Loop through all the user commands
 					for (userCommand in userCommands) {
+						// Get the additional docs from the map, if there are any
 						var additionalDocs = userCommand.additionalDocumentation[userCommand.name]
-						val provider = userCommand.translationsProvider
-						val bundle = userCommand.bundle
+						val provider = userCommand.translationsProvider // Quick variable to aid inlining
+						val bundle = userCommand.bundle // Quick variable to aid inlining
 						output +=
+							// Add the name and info, user commands have no description :(
 							"### ${"header.usercommand.name".translate(provider, language)}: `${
 								userCommand.name.translate(provider, language, userCommand.bundle)
 							}\n${
-								if (language != null && additionalDocs?.commandResult != null) {
+								// Add the command result if there is any
+								if (additionalDocs?.commandResult != null) {
 									"* **${"header.result".translate(provider, language)}**:${
 										additionalDocs.commandResult!!.translate(provider, language, bundle)
 									}\n"
@@ -265,7 +321,8 @@ internal object DocsGenerator {
 									""
 								}
 							}${
-								if (language != null && additionalDocs?.extraInformation != null) {
+								// Add the extra information if there is any
+								if (additionalDocs?.extraInformation != null) {
 									"* **${"header.additionalinfo".translate(provider, language)}**:${
 										additionalDocs.extraInformation!!.translate(provider, language, bundle)
 									}\n"
@@ -273,26 +330,28 @@ internal object DocsGenerator {
 									""
 								}
 							}${
-								if (language != null && userCommand.requiredPerms.isNotEmpty()) {
-									"\t* ${"header.permissions.required".translate(provider, language)}:${
+								// Add the required bot permissions if any
+								if (userCommand.requiredPerms.isNotEmpty()) {
+									"\t* ${"header.permissions.bot".translate(provider, language)}:${
 										userCommand.requiredPerms.formatPermissionsSet(language)
 									}\n"
 								} else {
 									""
 								}
 							}${
-								if (language != null && userCommand.defaultMemberPermissions != null) {
-									"\t* ${"header.permissions.default".translate(provider, language)}: ${
+								// Add the required member permissions if any
+								if (userCommand.defaultMemberPermissions != null) {
+									"\t* ${"header.permissions.member".translate(provider, language)}: ${
 										userCommand.defaultMemberPermissions.formatPermissionsSet(language)
 									}\n"
 								} else {
 									""
 								}
 							}"
-						additionalDocs = null
+						additionalDocs = null // Reset the additional docs for next time
 					}
 
-					totalOutput += output
+					totalOutput += output // Add user commands to the total output
 				}
 			}
 		}
@@ -300,14 +359,15 @@ internal object DocsGenerator {
 		return totalOutput
 	}
 
-	// TODO I'm going to die making this
-	@Suppress("UnusedPrivateMember", "EmptyFunctionBlock")
-	private suspend inline fun generateTextContents(
-		commandTypes: List<CommandTypes>,
-		loadedExtensions: List<Extension>
-	) {
-	}
-
+	/**
+	 * Updates the document file.
+	 *
+	 * @param path The path to the document file
+	 * @param fileFormat The [SupportedFileFormat] to store the file in
+	 * @param commandTypes The [List] of support [CommandTypes]
+	 * @param loadedExtensions The [List] of [Extension]s
+	 * @param languages A [List] of [Locale]s to translate the docs into
+	 */
 	suspend inline fun updateDocumentsFile(
 		path: Path,
 		fileFormat: SupportedFileFormat,
@@ -315,11 +375,14 @@ internal object DocsGenerator {
 		loadedExtensions: List<Extension>,
 		languages: List<Locale>? = null
 	) {
+		// If the languages list isn't null or empty, create the specific language files for each on
 		if (!languages.isNullOrEmpty()) {
 			languages.forEach { language ->
+				// Get a translated path
 				val i18nPath = Path(path.toString().replace(".md", "-${language.toLanguageTag()}.md"))
-				findOrCreateDocumentsFile(i18nPath)
+				findOrCreateDocumentsFile(i18nPath) // Find and/or create the file
 
+				// Check permissions and extension, combust if there are issues.
 				if (!i18nPath.toFile().canRead() || !i18nPath.toFile().canWrite()) {
 					throw IOException(
 						"Unable to read/write documents file for ${language.toLanguageTag()}! Please check the permissions"
@@ -329,8 +392,9 @@ internal object DocsGenerator {
 				}
 			}
 		} else {
-			findOrCreateDocumentsFile(path)
+			findOrCreateDocumentsFile(path) // Find and/or create the file
 
+			// Check permissions and extension, combust if there are issues
 			if (!path.toFile().canRead() || !path.toFile().canWrite()) {
 				throw IOException("Unable to read/write documents file! Please check the permissions!")
 			} else if (path.toFile().extension != fileFormat.fileExtension) {
@@ -341,33 +405,35 @@ internal object DocsGenerator {
 		@Suppress("OptionalWhenBraces") // How about no
 		when (fileFormat) {
 			SupportedFileFormat.MARKDOWN -> {
+				// If there is anything in the language list
 				if (!languages.isNullOrEmpty()) {
 					languages.forEach { language ->
+						// Generate the contents in the target language
 						val contents = generateMarkdownContents(commandTypes, loadedExtensions, language)
+						// Get the translated path
 						val translatedPath = Path(path.toString().replace(".md", "-${language.toLanguageTag()}.md"))
-						val writer = translatedPath.bufferedWriter(Charsets.UTF_8)
+						val writer = translatedPath.bufferedWriter(Charsets.UTF_8) // Create a writer
 						withContext(Dispatchers.IO) {
-							writer.write("")
-							writer.write(contents)
+							writer.write("") // Clear the old contents
+							writer.write(contents) // Add the new contents
 							writer.flush()
 							writer.close()
 						}
 						generatorLogger.info("Written documents for ${language.toLanguageTag()}!")
 					}
 				} else {
+					// Generate the contents in the target language
 					val contents = generateMarkdownContents(commandTypes, loadedExtensions)
-					val writer = path.bufferedWriter(Charsets.UTF_8)
+					val writer = path.bufferedWriter(Charsets.UTF_8) // Create a writer
 					withContext(Dispatchers.IO) {
-						writer.write("")
-						writer.write(contents)
+						writer.write("") // Clear the old contents
+						writer.write(contents) // Add the new contents
 						writer.flush()
 						writer.close()
 					}
 					generatorLogger.info("Written documents!")
 				}
 			}
-
-			SupportedFileFormat.TEXT -> generateTextContents(commandTypes, loadedExtensions) // TODO funni translations
 		}
 	}
 }

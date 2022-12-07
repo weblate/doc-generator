@@ -13,8 +13,13 @@ import com.kotlindiscord.kord.extensions.commands.application.ApplicationCommand
 import org.hyacinthbots.docgenerator.annotations.DocAdditionBuilderDSL
 import org.hyacinthbots.docgenerator.builder.DocAdditionBuilder
 
-// TODO Docs
-
+/**
+ * Provide additional documentation for commands.
+ *
+ * **Note**: This builder **will not** work in sub commands.
+ *
+ * @see DocAdditionBuilder
+ */
 @DocAdditionBuilderDSL
 public suspend fun ApplicationCommand<*>.additionalDocumentation(
 	builder: suspend DocAdditionBuilder.() -> Unit
@@ -24,6 +29,13 @@ public suspend fun ApplicationCommand<*>.additionalDocumentation(
 	additionalDocumentation[this.name] = action
 }
 
+/**
+ * Provide additional documentation for sub-commands.
+ *
+ * **Note**: This builder **will not** work in regular commands
+ *
+ * @see DocAdditionBuilder
+ */
 @DocAdditionBuilderDSL
 public suspend fun ApplicationCommand<*>.subCommandAdditionalDocumentation(
 	builder: suspend DocAdditionBuilder.() -> Unit
@@ -33,6 +45,9 @@ public suspend fun ApplicationCommand<*>.subCommandAdditionalDocumentation(
 	subCommandAdditionalDocumentation[this.name] = action
 }
 
+/**
+ * Internal variable to getting the additional documentation.
+ */
 @Suppress("UnusedReceiverParameter") // My goals are not known to you, mere compiler
 internal var ApplicationCommand<*>.additionalDocumentation: MutableMap<String, DocAdditionBuilder?>
 	get() = _additionalDocumentation
@@ -40,6 +55,9 @@ internal var ApplicationCommand<*>.additionalDocumentation: MutableMap<String, D
 		_additionalDocumentation = value
 	}
 
+/**
+ * Internal variable to getting the additional documentation.
+ */
 @Suppress("UnusedReceiverParameter")
 internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?>
 	get() = _subCommandAdditionalDocumentation
@@ -47,6 +65,12 @@ internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: MutableMap
 		_subCommandAdditionalDocumentation = value
 	}
 
+/**
+ * Private variable to get the persistence of additional docs to work.
+ */
 private var _additionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // I hate but it works
 
+/**
+ * Private variable to get the persistence of additional docs to work.
+ */
 private var _subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // More hatred

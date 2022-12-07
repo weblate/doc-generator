@@ -9,5 +9,6 @@
 
 package org.hyacinthbots.docgenerator.annotations
 
+/** Marks a class/function to be part of the configuration builder DSL. */
 @DslMarker
 public annotation class ConfigurationBuilderDSL

@@ -9,7 +9,12 @@
 
 package org.hyacinthbots.docgenerator.enums
 
-// TODO Docs
+/**
+ * Enumeration for environment types.
+ *
+ * @property DEVELOPMENT A development environment. Docs will be generated
+ * @property PRODUCTION A production environment. Docs will **not** be generated
+ */
 public enum class Environment(public val value: String) {
 	DEVELOPMENT("development"),
 	PRODUCTION("production")

@@ -9,7 +9,15 @@
 
 package org.hyacinthbots.docgenerator.enums
 
-// TODO Docs
+/**
+ * The types of commands that can be documented.
+ *
+ * **Note**: Chat commands are not included as they are being phased out of Discord.
+ *
+ * @property SLASH Slash Commands
+ * @property MESSAGE Message commands
+ * @property USER User commands
+ */
 public enum class CommandTypes {
 	SLASH,
 	MESSAGE,
