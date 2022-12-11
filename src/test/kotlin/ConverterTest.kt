@@ -17,16 +17,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import kotlin.test.assertEquals
 
+private val token = System.getenv("TEST_TOKEN")
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_TOKEN", matches = ".+")
 class ConverterTest {
 
 	@BeforeAll
 	fun startBot(): Unit = runBlocking {
-		ExtensibleBot(System.getenv("TEST_TOKEN")) {}
+		ExtensibleBot(token) {}
 	}
 
 	@Test
