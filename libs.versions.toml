@@ -2,7 +2,7 @@
 kordex = "1.5.5-20221205.192723-47"
 
 detekt = "1.22.0"
-logging = "3.0.4"
+logging = "2.1.23"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
