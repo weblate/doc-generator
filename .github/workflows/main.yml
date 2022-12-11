@@ -48,5 +48,7 @@ jobs:
 
       - name: Run tests
         uses: gradle/gradle-build-action@v2
+        env:
+          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
         with:
           arguments: test -x build
