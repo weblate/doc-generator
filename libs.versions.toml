@@ -4,8 +4,12 @@ kordex = "1.5.5-20221205.192723-47"
 detekt = "1.22.0"
 logging = "3.0.4"
 
+junit5 = "5.9.1"
+
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 kordex = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kordex" }
 logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }

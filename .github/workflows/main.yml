@@ -16,7 +16,7 @@ jobs:
       - name: Check API
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: clean apiCheck
+          arguments: clean apiCheck -x build
 
   build:
     needs: check-api
@@ -38,3 +38,15 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build --stacktrace
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: test -x build

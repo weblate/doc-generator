@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2022 HyacinthBots <hyacinthbots@outlook.com>
+ *
+ * This file is part of doc-generator.
+ *
+ * Licensed under the MIT license. For more information,
+ * please see the LICENSE file or https://mit-license.org/
+ */
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import kotlinx.coroutines.runBlocking

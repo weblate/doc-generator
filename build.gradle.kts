@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.logging)
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(kotlin("test-junit5"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 gitHooks {

@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2022 HyacinthBots <hyacinthbots@outlook.com>
+ *
+ * This file is part of doc-generator.
+ *
+ * Licensed under the MIT license. For more information,
+ * please see the LICENSE file or https://mit-license.org/
+ */
+
 import com.kotlindiscord.kord.extensions.i18n.ResourceBundleTranslations
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import dev.kord.common.entity.Permission
