@@ -18,7 +18,7 @@ jobs:
 
         with:
           arguments: clean apiCheck -x build
-          cache-read-only: ${{ jobs.check-api.name == 'check-api' }}
+          cache-read-only: ${{ 'check-api' == 'check-api' }}
 
   build:
     needs: check-api
