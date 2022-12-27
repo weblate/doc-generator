@@ -57,6 +57,10 @@ public final class org/hyacinthbots/docgenerator/enums/CommandTypes : java/lang/
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 }
 
+public final class org/hyacinthbots/docgenerator/enums/CommandTypesKt {
+	public static final fun getALL_COMMAND_TYPES ()Ljava/util/List;
+}
+
 public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/Enum {
 	public static final field DEVELOPMENT Lorg/hyacinthbots/docgenerator/enums/Environment;
 	public static final field PRODUCTION Lorg/hyacinthbots/docgenerator/enums/Environment;

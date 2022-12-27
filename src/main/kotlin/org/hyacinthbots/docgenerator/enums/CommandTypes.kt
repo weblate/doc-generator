@@ -23,3 +23,12 @@ public enum class CommandTypes {
 	MESSAGE,
 	USER
 }
+
+/**
+ * A convenience list containing all types of supported commands, for use in the configuration builder.
+ */
+public val ALL_COMMAND_TYPES: List<CommandTypes> = listOf(
+	CommandTypes.SLASH,
+	CommandTypes.MESSAGE,
+	CommandTypes.USER
+)
