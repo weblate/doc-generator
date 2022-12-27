@@ -18,8 +18,8 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
+import org.hyacinthbots.docgenerator.CommandTypes
 import org.hyacinthbots.docgenerator.additionalDocumentation
-import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile

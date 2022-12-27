@@ -12,8 +12,8 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
 import kotlinx.coroutines.runBlocking
-import org.hyacinthbots.docgenerator.enums.ALL_COMMAND_TYPES
-import org.hyacinthbots.docgenerator.enums.CommandTypes
+import org.hyacinthbots.docgenerator.CommandType
+import org.hyacinthbots.docgenerator.CommandTypes
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
 import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.translate
@@ -65,10 +65,10 @@ class UtilsTest {
 
 	@Test
 	@Order(4)
-	fun `ALL_COMMAND_TYPES contains all command types`(): Unit = runBlocking {
+	fun `CommandType ALL contains all command types`(): Unit = runBlocking {
 		CommandTypes.values().forEach {
 			assertTrue("All commands types were not present in the list: $it is missing.") {
-				it in ALL_COMMAND_TYPES
+				it in CommandType.ALL
 			}
 		}
 	}

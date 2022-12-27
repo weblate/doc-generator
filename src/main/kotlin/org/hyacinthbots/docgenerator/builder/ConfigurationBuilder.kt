@@ -9,8 +9,8 @@
 
 package org.hyacinthbots.docgenerator.builder
 
+import org.hyacinthbots.docgenerator.CommandTypes
 import org.hyacinthbots.docgenerator.annotations.ConfigurationBuilderDSL
-import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import java.nio.file.Path
 
