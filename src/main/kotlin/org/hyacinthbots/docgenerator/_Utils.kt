@@ -107,46 +107,34 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  */
 internal fun formatArguments(
 	arg: Argument<*>,
-    subCommand: Boolean,
-    provider: TranslationsProvider,
-    bundle: String?,
-    language: Locale?
+	subCommand: Boolean,
+	provider: TranslationsProvider,
+	bundle: String?,
+	language: Locale?
 ): String =
 	// Sub commands require and extra tab of indentation
 	if (subCommand) {
-		"\t\t\t* **${"header.arguments.name".translate(provider, language)}**: " +
-				"${arg.displayName.translate(provider, language, bundle)}\n" +
-
-				"\t\t\t* **${"header.arguments.description".translate(provider, language)}**: " +
-				"${arg.description.translate(provider, language, bundle)}\n" +
-
-				"\t\t\t* **${"header.arguments.type".translate(provider, language)}**: ${
+		"\t\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+				"${arg.description.translate(provider, language, bundle)} - " +
+				"${
 					if (language != null) {
 						ConverterFormatter(
 							"${arg.converter}", arg.converter.signatureTypeString, language
 						).formatConverter(language)
 					} else {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString
-						).formatConverter()
+						ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
 					}
 				}\n"
 	} else {
-		"\t\t* **${"header.arguments.name".translate(provider, language)}**: " +
-				"${arg.displayName.translate(provider, language, bundle)}\n" +
-
-				"\t\t* **${"header.arguments.description".translate(provider, language)}**: " +
-				"${arg.description.translate(provider, language, bundle)}\n" +
-
-				"\t\t* **${"header.arguments.type".translate(provider, language)}**: ${
+		"\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+				"${arg.description.translate(provider, language, bundle)} - " +
+				"${
 					if (language != null) {
 						ConverterFormatter(
 							"${arg.converter}", arg.converter.signatureTypeString, language
 						).formatConverter(language)
 					} else {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString
-						).formatConverter()
+						ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
 					}
 				}\n"
 	}
