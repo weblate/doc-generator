@@ -4,12 +4,12 @@ plugins {
     `java-library`
     `maven-publish`
 
-    kotlin("jvm")
+    val kotlinVersion = "1.7.21"
+    kotlin("jvm") version kotlinVersion
 
-    id("io.gitlab.arturbosch.detekt")
-    id("com.github.jakemarsden.git-hooks")
-    id("org.cadixdev.licenser")
-
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("com.github.jakemarsden.git-hooks") version "0.0.2"
+    id("org.cadixdev.licenser") version "0.6.1"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.1"
 }
 

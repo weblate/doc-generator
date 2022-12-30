@@ -51,6 +51,8 @@ internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
  * @param provider The translation provider
  * @param language The [Locale] to translate into
  * @param bundle The bundle that has the translation, `doc-generator` by default
+ *
+ * @return The localised translation string
  */
 internal fun String.translate(
 	provider: TranslationsProvider,
@@ -104,6 +106,8 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  * @param provider The translation provider
  * @param bundle The bundle to get the translations from
  * @param language the [Locale] to translate into
+ *
+ * @return The arguments, formatted into a presentable manner
  */
 internal fun formatArguments(
 	arg: Argument<*>,
@@ -114,7 +118,7 @@ internal fun formatArguments(
 ): String =
 	// Sub commands require and extra tab of indentation
 	if (subCommand) {
-		"\t\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+		"\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
 				"${arg.description.translate(provider, language, bundle)} - " +
 				"${
 					if (language != null) {
@@ -126,7 +130,7 @@ internal fun formatArguments(
 					}
 				}\n"
 	} else {
-		"\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+		"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
 				"${arg.description.translate(provider, language, bundle)} - " +
 				"${
 					if (language != null) {
