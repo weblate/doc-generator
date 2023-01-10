@@ -7,7 +7,7 @@
  * please see the LICENSE file or https://mit-license.org/
  */
 
-package org.hyacinthbots.docgenerator.excpetions
+package org.hyacinthbots.docgenerator.exceptions
 
 /**
  * Exception thrown when an environment variable is not recognised.

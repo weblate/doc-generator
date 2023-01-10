@@ -9,7 +9,7 @@
 
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import kotlinx.coroutines.runBlocking
-import org.hyacinthbots.docgenerator.excpetions.InvalidConverterException
+import org.hyacinthbots.docgenerator.exceptions.InvalidConverterException
 import org.hyacinthbots.docgenerator.generator.ConverterFormatter
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order

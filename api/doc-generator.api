@@ -81,15 +81,15 @@ public final class org/hyacinthbots/docgenerator/enums/SupportedFileFormat : jav
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 }
 
-public final class org/hyacinthbots/docgenerator/excpetions/ConflictingFileFormatException : java/lang/Exception {
+public final class org/hyacinthbots/docgenerator/exceptions/ConflictingFileFormatException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public final class org/hyacinthbots/docgenerator/excpetions/InvalidConverterException : java/lang/Exception {
+public final class org/hyacinthbots/docgenerator/exceptions/InvalidConverterException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public final class org/hyacinthbots/docgenerator/excpetions/InvalidEnvironmentVariableException : java/lang/Exception {
+public final class org/hyacinthbots/docgenerator/exceptions/InvalidEnvironmentVariableException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 }
 

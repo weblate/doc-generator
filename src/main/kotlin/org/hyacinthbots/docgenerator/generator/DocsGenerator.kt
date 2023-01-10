@@ -21,7 +21,7 @@ import mu.KotlinLogging
 import org.hyacinthbots.docgenerator.CommandTypes
 import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
-import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
+import org.hyacinthbots.docgenerator.exceptions.ConflictingFileFormatException
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
 import org.hyacinthbots.docgenerator.formatArguments
 import org.hyacinthbots.docgenerator.formatPermissionsSet
