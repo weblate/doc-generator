@@ -1,5 +1,10 @@
 [versions]
+kotlin = "1.7.21"
 kordex = "1.5.5-20221205.192723-47"
+
+git-hooks = "0.0.2"
+licenser = "0.6.1"
+bin-compat = "0.12.1"
 
 detekt = "1.22.0"
 logging = "3.0.4"
@@ -13,3 +18,10 @@ kordex = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version
 logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+git-hooks = { id = "com.github.jakemarsden.git-hooks", version.ref = "git-hooks"}
+licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }
+binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "bin-compat" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
