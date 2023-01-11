@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.7.21"
-kordex = "1.5.5-20221205.192723-47"
+kordex = "1.5.6-20221216.114038-3"
 
 git-hooks = "0.0.2"
 licenser = "0.6.1"

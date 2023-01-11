@@ -102,7 +102,6 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  * function for formatting the arguments of a command into a nice string.
  *
  * @param arg The argument to translate
- * @param subCommand Whether this is part of a subcommand or not
  * @param provider The translation provider
  * @param bundle The bundle to get the translations from
  * @param language the [Locale] to translate into
@@ -111,37 +110,21 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  */
 internal fun formatArguments(
 	arg: Argument<*>,
-	subCommand: Boolean,
 	provider: TranslationsProvider,
 	bundle: String?,
 	language: Locale?
 ): String =
-	// Sub commands require and extra tab of indentation
-	if (subCommand) {
-		"\t\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
-				"${arg.description.translate(provider, language, bundle)} - " +
-				"${
-					if (language != null) {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString, language
-						).formatConverter(language)
-					} else {
-						ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
-					}
-				}\n"
-	} else {
-		"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
-				"${arg.description.translate(provider, language, bundle)} - " +
-				"${
-					if (language != null) {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString, language
-						).formatConverter(language)
-					} else {
-						ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
-					}
-				}\n"
-	}
+	"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+			"${arg.description.translate(provider, language, bundle)} - " +
+			"${
+				if (language != null) {
+					ConverterFormatter(
+						"${arg.converter}", arg.converter.signatureTypeString, language
+					).formatConverter(language)
+				} else {
+					ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
+				}
+			}\n"
 
 /** The name of the bundle containing this projects translations. */
 internal const val DEFAULT_BUNDLE_NAME = "doc-generator"
