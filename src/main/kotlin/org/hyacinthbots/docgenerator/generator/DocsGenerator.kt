@@ -72,31 +72,8 @@ internal object DocsGenerator {
 					if (slashCommands.isNotEmpty()) {
 						for (slashCommand in slashCommands) {
 							var commandInfo = "" // The eventual output of this particular slash command
-							val parentProvider =
-								slashCommand.translationsProvider // Quick variable to allow for inlining
 							// If the slash command list is not empty, format the documents with sub command info
 							if (slashCommand.subCommands.isNotEmpty()) {
-								// Collect the extra docs from its reference in the map, if there is one
-								var parentExtraDocs = slashCommand.additionalDocumentation[slashCommand.name]
-								// Add the description and name of the command
-								commandInfo += "### ${"header.parentcommand.name".translate(parentProvider, language)
-								}: `${
-									slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
-								}`\n* **${"header.parentcommand.description".translate(parentProvider, language)}**: ${
-									slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
-								}\n${
-									// If there is extra information, add it to the parent command, or just leave blank
-									if (parentExtraDocs?.extraInformation != null) {
-										"* **${"header.additionalinfo".translate(parentProvider, language)}**: ${
-											parentExtraDocs.extraInformation!!.translate(
-												parentProvider, language, slashCommand.bundle
-											)
-										}\n"
-									} else {
-										""
-									}
-								}"
-
 								// For each sub command in the list, format it and add arguments
 								slashCommand.subCommands.forEach { subCommand ->
 									var arguments = ""
@@ -108,25 +85,26 @@ internal object DocsGenerator {
 									// Format each argument in a nice way to read
 									subCommand.arguments?.invoke()?.args?.forEach { arg ->
 										arguments += formatArguments(
-											arg, true, subProvider, subCommand.bundle, language
+											arg, subProvider, subCommand.bundle, language
 										)
 									}
 
 									// If the arguments list is empty, acknowledge it
 									if (arguments.isEmpty()) {
-									    arguments = "arguments.none".translate(subProvider, language)
+										arguments = "arguments.none".translate(subProvider, language)
 									}
 
 									// Add the title and description of the sub command
-									commandInfo += "\t#### ${"header.subcommand.name".translate(subProvider, language)
-									}: `${
+									commandInfo += "#### ${
+										"header.command.name".translate(subProvider, language)
+									}: `${subCommand.parentCommand?.name?.translate(subProvider, language, bundle)} ${
 										subCommand.name.translate(subProvider, language, bundle)
-									}`\n\t* **${"header.subcommand.description".translate(subProvider, language)}**: ${
+									}`\n* **${"header.command.description".translate(subProvider, language)}**: ${
 										subCommand.description.translate(subProvider, language, bundle)
 									}\n${
 										// Add the result of the command, if one was provided
 										if (subExtraDocs?.commandResult != null) {
-											"\t* **${"header.result".translate(subProvider, language)}**:${
+											"* **${"header.result".translate(subProvider, language)}**:${
 												subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
 											}\n"
 										} else {
@@ -135,7 +113,7 @@ internal object DocsGenerator {
 									}${
 										// Add the additional info, if there was any provided
 										if (subExtraDocs?.extraInformation != null) {
-											"\t* **${"header.additionalinfo".translate(subProvider, language)}**:${
+											"* **${"header.additionalinfo".translate(subProvider, language)}**:${
 												subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
 											}\n"
 										} else {
@@ -144,7 +122,7 @@ internal object DocsGenerator {
 									}${
 										// Add any required bot perms to the document
 										if (subCommand.requiredPerms.isNotEmpty()) {
-											"\t* ${"header.permissions.bot".translate(subProvider, language)}:${
+											"* ${"header.permissions.bot".translate(subProvider, language)}:${
 												subCommand.requiredPerms.formatPermissionsSet(language)
 											}\n"
 										} else {
@@ -153,18 +131,16 @@ internal object DocsGenerator {
 									}${
 										// Add any required member perms to the document
 										if (subCommand.defaultMemberPermissions != null) {
-											"\t* ${"header.permissions.member".translate(subProvider, language)}: ${
+											"* ${"header.permissions.member".translate(subProvider, language)}: ${
 												subCommand.defaultMemberPermissions.formatPermissionsSet(language)
 											}\n"
 										} else {
 											""
 										}
 										// Actually add the arguments
-									}\n\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
+									}\n* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
 									subExtraDocs = null // Reset the extra docs to get the new ones on the next loop
 								}
-								parentExtraDocs =
-									null // Reset the parent extra docs to get the new ones in the next loop
 							} else {
 								var arguments = ""
 								val slashProvider = slashCommand.translationsProvider // Quick var to allow inlining
@@ -175,7 +151,7 @@ internal object DocsGenerator {
 								// Loop through the arguments and format me
 								slashCommand.arguments?.invoke()?.args?.forEach { arg ->
 									arguments += formatArguments(
-										arg, false, slashProvider, bundle, language
+										arg, slashProvider, bundle, language
 									)
 								}
 
@@ -288,7 +264,7 @@ internal object DocsGenerator {
 										""
 									}
 								}${
-									// Add the required memeber permissions, if there are any
+									// Add the required member permissions, if there are any
 									if (messageCommand.defaultMemberPermissions != null) {
 										"* ${"header.permissions.member".translate(provider, language)}: ${
 											messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
