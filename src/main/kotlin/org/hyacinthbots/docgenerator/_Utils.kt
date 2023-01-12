@@ -10,6 +10,7 @@
 package org.hyacinthbots.docgenerator
 
 import com.kotlindiscord.kord.extensions.commands.Argument
+import com.kotlindiscord.kord.extensions.i18n.DEFAULT_KORDEX_BUNDLE
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.utils.translate
@@ -113,9 +114,16 @@ internal fun formatArguments(
 	provider: TranslationsProvider,
 	bundle: String?,
 	language: Locale?
-): String =
-	"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
-			"${arg.description.translate(provider, language, bundle)} - " +
+): String {
+	var targetBundle = bundle
+	kordexArgContents.forEach {
+		if (arg.displayName.contains(it)) {
+			targetBundle = DEFAULT_KORDEX_BUNDLE
+		}
+	}
+
+	return "\t* `${arg.displayName.translate(provider, language, targetBundle)}` - " +
+			"${arg.description.translate(provider, language, targetBundle)} - " +
 			"${
 				if (language != null) {
 					ConverterFormatter(
@@ -125,6 +133,10 @@ internal fun formatArguments(
 					ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
 				}
 			}\n"
+}
+
+private val kordexArgContents = listOf("argument.toggle", "argument.api-url", "argument.bot")
+// private val kordexCommandContents = listOf("command.pluralkit")
 
 /** The name of the bundle containing this projects translations. */
 internal const val DEFAULT_BUNDLE_NAME = "doc-generator"

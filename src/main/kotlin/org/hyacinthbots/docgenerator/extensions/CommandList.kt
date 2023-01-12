@@ -38,7 +38,7 @@ public class CommandList : Extension() {
 						var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
 						pagesObj.addPage(
 							Page {
-								title = subCommand.parentCommand?.name + subCommand.name
+								title = "${subCommand.parentCommand?.name} ${subCommand.name}"
 								description = subCommand.description
 								field {
 									name = "Arguments"
