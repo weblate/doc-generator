@@ -60,7 +60,7 @@ internal object DocsGenerator {
 			when (type) {
 				CommandTypes.SLASH -> {
 					// Gather a list of slash commands from the loaded extensions
-					val slashCommands: MutableList<SlashCommand<*, *>> = mutableListOf()
+					val slashCommands: MutableList<SlashCommand<*, *, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						slashCommands.addAll(extension.slashCommands)
 					}
@@ -218,7 +218,7 @@ internal object DocsGenerator {
 
 				CommandTypes.MESSAGE -> {
 					// Collect all the message commands into a list from the loaded extensions
-					val messageCommands: MutableList<MessageCommand<*>> = mutableListOf()
+					val messageCommands: MutableList<MessageCommand<*, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						messageCommands.addAll(extension.messageCommands)
 					}
@@ -284,7 +284,7 @@ internal object DocsGenerator {
 
 				CommandTypes.USER -> {
 					// Collect the user commands into a list
-					val userCommands: MutableList<UserCommand<*>> = mutableListOf()
+					val userCommands: MutableList<UserCommand<*, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						userCommands.addAll(extension.userCommands)
 					}
