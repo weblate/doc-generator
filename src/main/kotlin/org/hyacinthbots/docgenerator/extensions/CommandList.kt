@@ -31,14 +31,18 @@ public class CommandList : Extension() {
 				if (slashCommand.subCommands.isNotEmpty()) {
 					slashCommand.subCommands.forEach { subCommand ->
 						var arguments: String? = ""
+						val provider = subCommand.translationsProvider
+						val bundle = subCommand.extension.bundle
 						subCommand.arguments?.invoke()?.args?.forEach { arg ->
-							arguments += formatArguments(arg, subCommand.translationsProvider, subCommand.bundle, null)
+							arguments += formatArguments(arg, provider, bundle, null)
 						}
 						if (arguments?.isEmpty() == true) arguments = null
 						var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
 						pagesObj.addPage(
 							Page {
-								title = "${subCommand.parentCommand?.name} ${subCommand.name}"
+								title = "${
+									subCommand.parentCommand?.name?.translate(provider, null, bundle)
+								} ${subCommand.name.translate(provider, null, bundle)}"
 								description = subCommand.description
 								field {
 									name = "Arguments"
@@ -47,12 +51,7 @@ public class CommandList : Extension() {
 								field {
 									name = "Permissions"
 									value = if (subCommand.requiredPerms.isNotEmpty()) {
-										"* ${
-											"header.permissions.bot".translate(
-												subCommand.translationsProvider,
-												null
-											)
-										}:${
+										"* ${"header.permissions.bot".translate(provider, null, bundle)}:${
 											subCommand.requiredPerms.formatPermissionsSet(null)
 										}\n"
 									} else {
@@ -63,16 +62,9 @@ public class CommandList : Extension() {
 									field {
 										name = "Result"
 										value = "* **${
-											"header.result".translate(
-												subCommand.translationsProvider,
-												null
-											)
+											"header.result".translate(provider, null, bundle)
 										}**:${
-											subExtraDocs!!.commandResult!!.translate(
-												subCommand.translationsProvider,
-												null,
-												bundle
-											)
+											subExtraDocs!!.commandResult!!.translate(provider, null, bundle)
 										}\n"
 									}
 								}
@@ -82,15 +74,17 @@ public class CommandList : Extension() {
 					}
 				} else {
 					var arguments: String? = ""
+					val provider = slashCommand.translationsProvider
+					val bundle = slashCommand.extension.bundle
 					slashCommand.arguments?.invoke()?.args?.forEach { arg ->
-						arguments += formatArguments(arg, slashCommand.translationsProvider, slashCommand.bundle, null)
+						arguments += formatArguments(arg, provider, bundle, null)
 					}
 					if (arguments?.isEmpty() == true) arguments = null
 					var subExtraDocs = slashCommand.subCommandAdditionalDocumentation[slashCommand.name]
 					pagesObj.addPage(
 						Page {
-							title = slashCommand.name
-							description = slashCommand.description
+							title = slashCommand.name.translate(provider, null, bundle)
+							description = slashCommand.description.translate(provider, null, bundle)
 							field {
 								name = "Arguments"
 								value = arguments ?: "None"
@@ -98,9 +92,8 @@ public class CommandList : Extension() {
 							field {
 								name = "Permissions"
 								value = if (slashCommand.requiredPerms.isNotEmpty()) {
-									"* ${"header.permissions.bot".translate(slashCommand.translationsProvider, null)}:${
-										slashCommand.requiredPerms.formatPermissionsSet(null)
-									}\n"
+									"* ${"header.permissions.bot".translate(provider, null, bundle)
+									}:${slashCommand.requiredPerms.formatPermissionsSet(null)}\n"
 								} else {
 									"None"
 								}
@@ -109,12 +102,8 @@ public class CommandList : Extension() {
 								field {
 									name = "Result"
 									value =
-										"* **${"header.result".translate(slashCommand.translationsProvider, null)}**:${
-											subExtraDocs!!.commandResult!!.translate(
-												slashCommand.translationsProvider,
-												null,
-												bundle
-											)
+										"* **${"header.result".translate(provider, null, bundle)}**:${
+											subExtraDocs!!.commandResult!!.translate(provider, null, bundle)
 										}\n"
 								}
 							}

@@ -85,7 +85,7 @@ internal object DocsGenerator {
 									// Format each argument in a nice way to read
 									subCommand.arguments?.invoke()?.args?.forEach { arg ->
 										arguments += formatArguments(
-											arg, subProvider, subCommand.bundle, language
+											arg, subProvider, bundle, language
 										)
 									}
 
