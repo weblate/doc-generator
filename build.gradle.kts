@@ -107,7 +107,7 @@ license {
 
 publishing {
     publications {
-        register<MavenPublication>("publishToMavenLocal") {
+        create<MavenPublication>("publishToMavenLocal") {
             from(components.getByName("java"))
         }
     }
