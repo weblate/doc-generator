@@ -109,9 +109,6 @@ license {
 
 val isJitPack get() = "true" == System.getenv("JITPACK")
 
-
-val name = "doc-generator"
-val mavenGroup = "org.hyacinthbots"
 val mavenVersion: String
     get() = if (isJitPack) System.getenv("RELEASE_TAG") else {
         val tag = System.getenv("GITHUB_TAG_NAME")
@@ -129,27 +126,21 @@ val commitHash get() = System.getenv("GITHUB_SHA") ?: "unknown"
 
 val shortCommitHash get() = System.getenv("SHORT_SHA") ?: "unknown"
 
-val description = "Generate documentation for KordEx bots!"
-val projectUrl = "https://github.com/HyacinthBots/doc-generator"
-
 val isUndefined: Boolean get() = mavenVersion == "undefined"
 val isSnapshot: Boolean get() = mavenVersion.endsWith("-SNAPSHOT")
 val isRelease get() = !isSnapshot && !isUndefined
 
-val releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-val snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-
 publishing {
     publications {
-        create<MavenPublication>(name) {
-            groupId = mavenGroup
-            artifactId = name
+        create<MavenPublication>("doc-generator") {
+            groupId = "org.hyacinthbots"
+            artifactId = "doc-generator"
             version = mavenVersion
 
             pom {
-                name.set(name)
-                description.set(description)
-                url.set(projectUrl)
+                name.set("doc-generator")
+                description.set("Generate documentation for KordEx bots!")
+                url.set("https://github.com/HyacinthBots/doc-generator")
 
                 organization {
                     name.set("HyacinthBots")
@@ -183,7 +174,13 @@ publishing {
             if (!isJitPack) {
                 repositories {
                     maven {
-                        url = uri(if (isSnapshot) snapshotsUrl else releasesUrl)
+                        url = uri(
+                            if (isSnapshot) {
+                                "https://oss.sonatype.org/content/repositories/snapshots/"
+                            } else {
+                                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                            }
+                        )
 
                         credentials {
                             username = System.getenv("NEXUS_USER")
@@ -203,6 +200,6 @@ if (!isJitPack && isRelease) {
         if (signingKey != null && signingPassword != null) {
             useInMemoryPgpKeys(String(Base64.getDecoder().decode(signingKey)), signingPassword)
         }
-        sign(publishing.publications[name])
+        sign(publishing.publications["doc-generator"])
     }
 }
