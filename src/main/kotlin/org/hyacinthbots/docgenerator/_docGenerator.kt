@@ -33,7 +33,11 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 	action.builder()
 
 	if (action.useBuiltinCommandList) {
-		extensions { add(::CommandList) }
+		extensions {
+			add {
+				CommandList(action.commandTypes)
+			}
+		}
 	}
 
 	hooks {
