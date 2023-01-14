@@ -18,12 +18,12 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
-import org.hyacinthbots.docgenerator.CommandTypes
+import org.hyacinthbots.docgenerator.addArguments
 import org.hyacinthbots.docgenerator.additionalDocumentation
+import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
 import org.hyacinthbots.docgenerator.exceptions.ConflictingFileFormatException
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
-import org.hyacinthbots.docgenerator.formatArguments
 import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import org.hyacinthbots.docgenerator.translate
@@ -76,18 +76,11 @@ internal object DocsGenerator {
 							if (slashCommand.subCommands.isNotEmpty()) {
 								// For each sub command in the list, format it and add arguments
 								slashCommand.subCommands.forEach { subCommand ->
-									var arguments = ""
 									val subProvider = subCommand.translationsProvider
+									val bundle = subCommand.extension.bundle
+									var arguments = addArguments(subCommand, subProvider, bundle, language)
 									// Get any additional documentation from the map
 									var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
-									val bundle = subCommand.extension.bundle
-
-									// Format each argument in a nice way to read
-									subCommand.arguments?.invoke()?.args?.forEach { arg ->
-										arguments += formatArguments(
-											arg, subProvider, bundle, language
-										)
-									}
 
 									// If the arguments list is empty, acknowledge it
 									if (arguments.isEmpty()) {
@@ -142,19 +135,11 @@ internal object DocsGenerator {
 									subExtraDocs = null // Reset the extra docs to get the new ones on the next loop
 								}
 							} else {
-								var arguments = ""
 								val slashProvider = slashCommand.translationsProvider // Quick var to allow inlining
 								// Get the extra documents for the command from the map, if there are any
 								var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
-								// Quick variable to allow for inlining
-								val bundle = slashCommand.extension.bundle
-								// Loop through the arguments and format me
-								slashCommand.arguments?.invoke()?.args?.forEach { arg ->
-									arguments += formatArguments(
-										arg, slashProvider, bundle, language
-									)
-								}
-
+								val bundle = slashCommand.extension.bundle // Quick var to allow for inlining
+								var arguments = addArguments(slashCommand, slashProvider, bundle, language)
 								// If there are no arguments, acknowledge it
 								if (arguments.isEmpty()) {
 									arguments = "arguments.none".translate(slashProvider, language)

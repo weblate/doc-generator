@@ -10,6 +10,7 @@
 package org.hyacinthbots.docgenerator
 
 import com.kotlindiscord.kord.extensions.commands.Argument
+import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.utils.translate
@@ -125,6 +126,30 @@ internal fun formatArguments(
 					ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
 				}
 			}\n"
+
+/**
+ * Adds all a commands arguments to a string.
+ *
+ * @param command The command to get the args from
+ * @param provider The translation provider
+ * @param bundle The bundle to get the translations from
+ * @param language The [Locale] to translate into
+ *
+ * @return A string containing all the commands arguments.
+ */
+internal fun addArguments(
+	command: SlashCommand<*, *, *>,
+	provider: TranslationsProvider,
+	bundle: String?,
+	language: Locale?
+): String {
+	var argumentsString = ""
+	command.arguments?.invoke()?.args?.forEach { arg ->
+		argumentsString += formatArguments(arg, provider, bundle, language)
+	}
+
+	return argumentsString
+}
 
 /** The name of the bundle containing this projects translations. */
 internal const val DEFAULT_BUNDLE_NAME = "doc-generator"

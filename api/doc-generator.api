@@ -1,20 +1,3 @@
-public final class org/hyacinthbots/docgenerator/CommandType {
-	public static final field INSTANCE Lorg/hyacinthbots/docgenerator/CommandType;
-	public final fun getALL ()Ljava/util/List;
-	public final fun getMESSAGE ()Lorg/hyacinthbots/docgenerator/CommandTypes;
-	public final fun getSLASH ()Lorg/hyacinthbots/docgenerator/CommandTypes;
-	public final fun getUSER ()Lorg/hyacinthbots/docgenerator/CommandTypes;
-}
-
-public abstract class org/hyacinthbots/docgenerator/CommandTypes {
-	public static final field Companion Lorg/hyacinthbots/docgenerator/CommandTypes$Companion;
-}
-
-public final class org/hyacinthbots/docgenerator/CommandTypes$Companion {
-	public final fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/CommandTypes;
-	public final fun values ()[Lorg/hyacinthbots/docgenerator/CommandTypes;
-}
-
 public final class org/hyacinthbots/docgenerator/_docAdditionKt {
 	public static final fun additionalDocumentation (Lcom/kotlindiscord/kord/extensions/commands/application/ApplicationCommand;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun subCommandAdditionalDocumentation (Lcom/kotlindiscord/kord/extensions/commands/application/ApplicationCommand;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -66,6 +49,19 @@ public class org/hyacinthbots/docgenerator/builder/TranslationSupportBuilder {
 	public fun getSupportedLanguages ()Ljava/util/List;
 	public fun setEnableTranslations (Z)V
 	public fun setSupportedLanguages (Ljava/util/List;)V
+}
+
+public final class org/hyacinthbots/docgenerator/enums/CommandTypes : java/lang/Enum {
+	public static final field Companion Lorg/hyacinthbots/docgenerator/enums/CommandTypes$Companion;
+	public static final field MESSAGE Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static final field SLASH Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static final field USER Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+}
+
+public final class org/hyacinthbots/docgenerator/enums/CommandTypes$Companion {
+	public final fun getALL ()Ljava/util/List;
 }
 
 public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/Enum {

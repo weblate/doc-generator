@@ -58,7 +58,7 @@ internal var ApplicationCommand<*>.additionalDocumentation: MutableMap<String, D
 /**
  * Internal variable to getting the additional documentation.
  */
-@Suppress("UnusedReceiverParameter")
+@Suppress("UnusedReceiverParameter") // Just allow it my goodness
 internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?>
 	get() = _subCommandAdditionalDocumentation
 	set(value) {

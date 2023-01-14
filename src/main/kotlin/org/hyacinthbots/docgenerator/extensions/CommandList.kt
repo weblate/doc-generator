@@ -9,12 +9,16 @@
 
 package org.hyacinthbots.docgenerator.extensions
 
+import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.pagination.PublicResponsePaginator
 import com.kotlindiscord.kord.extensions.pagination.pages.Page
 import com.kotlindiscord.kord.extensions.pagination.pages.Pages
-import org.hyacinthbots.docgenerator.formatArguments
+import dev.kord.rest.builder.message.EmbedBuilder
+import org.hyacinthbots.docgenerator.addArguments
+import org.hyacinthbots.docgenerator.builder.DocAdditionBuilder
 import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import org.hyacinthbots.docgenerator.translate
@@ -25,91 +29,40 @@ public class CommandList : Extension() {
 	override suspend fun setup() {
 		val pagesObj = Pages()
 
-		@Suppress("DuplicatedCode")
 		bot.extensions.values.toMutableList().forEach {
 			it.slashCommands.forEach { slashCommand ->
 				if (slashCommand.subCommands.isNotEmpty()) {
 					slashCommand.subCommands.forEach { subCommand ->
-						var arguments: String? = ""
 						val provider = subCommand.translationsProvider
 						val bundle = subCommand.extension.bundle
-						subCommand.arguments?.invoke()?.args?.forEach { arg ->
-							arguments += formatArguments(arg, provider, bundle, null)
-						}
+						var arguments: String? = addArguments(subCommand, provider, bundle, null)
 						if (arguments?.isEmpty() == true) arguments = null
 						var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
 						pagesObj.addPage(
 							Page {
-								title = "${
-									subCommand.parentCommand?.name?.translate(provider, null, bundle)
-								} ${subCommand.name.translate(provider, null, bundle)}"
+								title = "${subCommand.parentCommand?.name?.translate(provider, null, bundle)}" +
+										" ${subCommand.name.translate(provider, null, bundle)}"
 								description = subCommand.description
-								field {
-									name = "Arguments"
-									value = arguments ?: "None"
-								}
-								field {
-									name = "Permissions"
-									value = if (subCommand.requiredPerms.isNotEmpty()) {
-										"* ${"header.permissions.bot".translate(provider, null, bundle)}:${
-											subCommand.requiredPerms.formatPermissionsSet(null)
-										}\n"
-									} else {
-										"None"
-									}
-								}
-								if (subExtraDocs?.commandResult != null) {
-									field {
-										name = "Result"
-										value = "* **${
-											"header.result".translate(provider, null, bundle)
-										}**:${
-											subExtraDocs!!.commandResult!!.translate(provider, null, bundle)
-										}\n"
-									}
-								}
+								createEmbed(arguments, subCommand, provider, bundle, subExtraDocs)
 							}
 						)
 						subExtraDocs = null
 					}
 				} else {
-					var arguments: String? = ""
+					var arguments: String?
 					val provider = slashCommand.translationsProvider
 					val bundle = slashCommand.extension.bundle
-					slashCommand.arguments?.invoke()?.args?.forEach { arg ->
-						arguments += formatArguments(arg, provider, bundle, null)
-					}
+					arguments = addArguments(slashCommand, provider, bundle, null)
 					if (arguments?.isEmpty() == true) arguments = null
-					var subExtraDocs = slashCommand.subCommandAdditionalDocumentation[slashCommand.name]
+					var extraDocs = slashCommand.subCommandAdditionalDocumentation[slashCommand.name]
 					pagesObj.addPage(
 						Page {
 							title = slashCommand.name.translate(provider, null, bundle)
 							description = slashCommand.description.translate(provider, null, bundle)
-							field {
-								name = "Arguments"
-								value = arguments ?: "None"
-							}
-							field {
-								name = "Permissions"
-								value = if (slashCommand.requiredPerms.isNotEmpty()) {
-									"* ${"header.permissions.bot".translate(provider, null, bundle)
-									}:${slashCommand.requiredPerms.formatPermissionsSet(null)}\n"
-								} else {
-									"None"
-								}
-							}
-							if (subExtraDocs?.commandResult != null) {
-								field {
-									name = "Result"
-									value =
-										"* **${"header.result".translate(provider, null, bundle)}**:${
-											subExtraDocs!!.commandResult!!.translate(provider, null, bundle)
-										}\n"
-								}
-							}
+							createEmbed(arguments, slashCommand, provider, bundle, extraDocs)
 						}
 					)
-					subExtraDocs = null
+					extraDocs = null
 				}
 			}
 		}
@@ -129,6 +82,47 @@ public class CommandList : Extension() {
 				)
 
 				paginator.send()
+			}
+		}
+	}
+
+	/**
+	 * Builds the embed content for the command list.
+	 *
+	 * @param args The command arguments string
+	 * @param command The command being documented
+	 * @param provider The translation provider
+	 * @param bundle The bundle to get the translations from
+	 * @param extraDocs Any extra documentation for the command
+	 */
+	private fun EmbedBuilder.createEmbed(
+		args: String?,
+		command: SlashCommand<*, *, *>,
+		provider: TranslationsProvider,
+		bundle: String?,
+		extraDocs: DocAdditionBuilder?
+	) {
+		field {
+			name = "Arguments"
+			value = args ?: "None"
+		}
+		field {
+			name = "Permissions"
+			value = if (command.requiredPerms.isNotEmpty()) {
+				"* ${
+					"header.permissions.bot".translate(provider, null, bundle)
+				}:${command.requiredPerms.formatPermissionsSet(null)}\n"
+			} else {
+				"None"
+			}
+		}
+		if (extraDocs?.commandResult != null) {
+			field {
+				name = "Result"
+				value =
+					"* **${"header.result".translate(provider, null, bundle)}**:${
+						extraDocs.commandResult!!.translate(provider, null, bundle)
+					}\n"
 			}
 		}
 	}
