@@ -14,7 +14,7 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import org.hyacinthbots.docgenerator.DEFAULT_BUNDLE_NAME
-import org.hyacinthbots.docgenerator.excpetions.InvalidConverterException
+import org.hyacinthbots.docgenerator.exceptions.InvalidConverterException
 import org.hyacinthbots.docgenerator.translate
 import java.util.Locale
 

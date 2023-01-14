@@ -52,6 +52,11 @@ public open class ConfigurationBuilder {
 	 */
 	public open lateinit var environment: String
 
+	/**
+	 * Whether to use the provided slash command containing a list of commands this bot uses.
+	 */
+	public open var useBuiltinCommandList: Boolean = false
+
 	/** @suppress Builder that should not be directly set by the user. */
 	public val translationSupport: TranslationSupportBuilder = TranslationSupportBuilder()
 

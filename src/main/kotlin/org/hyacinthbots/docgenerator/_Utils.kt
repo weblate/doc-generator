@@ -10,6 +10,7 @@
 package org.hyacinthbots.docgenerator
 
 import com.kotlindiscord.kord.extensions.commands.Argument
+import com.kotlindiscord.kord.extensions.commands.application.slash.SlashCommand
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.utils.translate
@@ -51,6 +52,8 @@ internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
  * @param provider The translation provider
  * @param language The [Locale] to translate into
  * @param bundle The bundle that has the translation, `doc-generator` by default
+ *
+ * @return The localised translation string
  */
 internal fun String.translate(
 	provider: TranslationsProvider,
@@ -100,56 +103,53 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  * function for formatting the arguments of a command into a nice string.
  *
  * @param arg The argument to translate
- * @param subCommand Whether this is part of a subcommand or not
  * @param provider The translation provider
  * @param bundle The bundle to get the translations from
  * @param language the [Locale] to translate into
+ *
+ * @return The arguments, formatted into a presentable manner
  */
 internal fun formatArguments(
 	arg: Argument<*>,
-    subCommand: Boolean,
-    provider: TranslationsProvider,
-    bundle: String?,
-    language: Locale?
+	provider: TranslationsProvider,
+	bundle: String?,
+	language: Locale?
 ): String =
-	// Sub commands require and extra tab of indentation
-	if (subCommand) {
-		"\t\t\t* **${"header.arguments.name".translate(provider, language)}**: " +
-				"${arg.displayName.translate(provider, language, bundle)}\n" +
+	"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
+			"${arg.description.translate(provider, language, bundle)} - " +
+			"${
+				if (language != null) {
+					ConverterFormatter(
+						"${arg.converter}", arg.converter.signatureTypeString, language
+					).formatConverter(language)
+				} else {
+					ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
+				}
+			}\n"
 
-				"\t\t\t* **${"header.arguments.description".translate(provider, language)}**: " +
-				"${arg.description.translate(provider, language, bundle)}\n" +
-
-				"\t\t\t* **${"header.arguments.type".translate(provider, language)}**: ${
-					if (language != null) {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString, language
-						).formatConverter(language)
-					} else {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString
-						).formatConverter()
-					}
-				}\n"
-	} else {
-		"\t\t* **${"header.arguments.name".translate(provider, language)}**: " +
-				"${arg.displayName.translate(provider, language, bundle)}\n" +
-
-				"\t\t* **${"header.arguments.description".translate(provider, language)}**: " +
-				"${arg.description.translate(provider, language, bundle)}\n" +
-
-				"\t\t* **${"header.arguments.type".translate(provider, language)}**: ${
-					if (language != null) {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString, language
-						).formatConverter(language)
-					} else {
-						ConverterFormatter(
-							"${arg.converter}", arg.converter.signatureTypeString
-						).formatConverter()
-					}
-				}\n"
+/**
+ * Adds all a commands arguments to a string.
+ *
+ * @param command The command to get the args from
+ * @param provider The translation provider
+ * @param bundle The bundle to get the translations from
+ * @param language The [Locale] to translate into
+ *
+ * @return A string containing all the commands arguments.
+ */
+internal fun addArguments(
+	command: SlashCommand<*, *, *>,
+	provider: TranslationsProvider,
+	bundle: String?,
+	language: Locale?
+): String {
+	var argumentsString = ""
+	command.arguments?.invoke()?.args?.forEach { arg ->
+		argumentsString += formatArguments(arg, provider, bundle, language)
 	}
+
+	return argumentsString
+}
 
 /** The name of the bundle containing this projects translations. */
 internal const val DEFAULT_BUNDLE_NAME = "doc-generator"

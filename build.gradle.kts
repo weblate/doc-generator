@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     `java-library`
     `maven-publish`
 
-    kotlin("jvm")
+    alias(libs.plugins.kotlin)
 
-    id("io.gitlab.arturbosch.detekt")
-    id("com.github.jakemarsden.git-hooks")
-    id("org.cadixdev.licenser")
-
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.1"
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.git.hooks)
+    alias(libs.plugins.licenser)
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 group = "org.hyacinthbots"
@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.logging)
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(kotlin("test-junit5"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 gitHooks {
@@ -50,7 +53,6 @@ gitHooks {
 
 kotlin {
     explicitApi()
-    jvmToolchain(javaVersion)
 }
 
 java {
@@ -60,16 +62,8 @@ java {
     withSourcesJar()
 }
 
-val sourceJar = task("sourceJar", Jar::class) {
-    dependsOn(tasks["classes"])
-    archiveClassifier.set("source")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadoc = task("javadocJar", Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
-    from(tasks.javadoc)
+if (JavaVersion.current() < JavaVersion.toVersion(javaVersion)) {
+    kotlin.jvmToolchain(javaVersion)
 }
 
 tasks {
@@ -80,7 +74,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = javaVersion.toString()
-            languageVersion = "1.7"
+            languageVersion = libs.plugins.kotlin.get().version.requiredVersion.substringBeforeLast(".")
             incremental = true
             freeCompilerArgs = freeCompilerArgs + listOf(
                 "-opt-in=kotlin.RequiresOptIn"
@@ -95,7 +89,6 @@ tasks {
     }
 
     wrapper {
-        gradleVersion = "7.6"
         distributionType = Wrapper.DistributionType.ALL
     }
 }
@@ -116,8 +109,6 @@ publishing {
     publications {
         create<MavenPublication>("publishToMavenLocal") {
             from(components.getByName("java"))
-            artifact(javadoc)
-            artifact(sourceJar)
         }
     }
 }

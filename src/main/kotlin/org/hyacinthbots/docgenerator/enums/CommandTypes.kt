@@ -17,9 +17,14 @@ package org.hyacinthbots.docgenerator.enums
  * @property SLASH Slash Commands
  * @property MESSAGE Message commands
  * @property USER User commands
+ * @property ALL All command types as a list
  */
 public enum class CommandTypes {
 	SLASH,
 	MESSAGE,
-	USER
+	USER;
+
+	public companion object {
+		public val ALL: List<CommandTypes> = listOf(SLASH, MESSAGE, USER)
+	}
 }

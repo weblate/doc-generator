@@ -18,12 +18,12 @@ import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
+import org.hyacinthbots.docgenerator.addArguments
 import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.enums.SupportedFileFormat
-import org.hyacinthbots.docgenerator.excpetions.ConflictingFileFormatException
+import org.hyacinthbots.docgenerator.exceptions.ConflictingFileFormatException
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
-import org.hyacinthbots.docgenerator.formatArguments
 import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import org.hyacinthbots.docgenerator.translate
@@ -60,7 +60,7 @@ internal object DocsGenerator {
 			when (type) {
 				CommandTypes.SLASH -> {
 					// Gather a list of slash commands from the loaded extensions
-					val slashCommands: MutableList<SlashCommand<*, *>> = mutableListOf()
+					val slashCommands: MutableList<SlashCommand<*, *, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						slashCommands.addAll(extension.slashCommands)
 					}
@@ -69,162 +69,133 @@ internal object DocsGenerator {
 					var output = "## ${"title.slash".translate(externalTranslationsProvider, language)}\n\n"
 
 					// Iterate through the list of slash commands we gathered
-					for (slashCommand in slashCommands) {
-						var commandInfo = "" // The eventual output of this particular slash command
-						val parentProvider = slashCommand.translationsProvider // Quick variable to allow for inlining
-						// If the slash command list is not empty, format the documents with sub command info
-						if (slashCommand.subCommands.isNotEmpty()) {
-							// Collect the extra docs from its reference in the map, if there is one
-							var parentExtraDocs = slashCommand.additionalDocumentation[slashCommand.name]
-							// Add the description and name of the command
-							commandInfo += "### ${"header.parentcommand.name".translate(parentProvider, language)}: `${
-								slashCommand.name.translate(parentProvider, language, slashCommand.bundle)
-							}`\n* **${"header.parentcommand.description".translate(parentProvider, language)}**: ${
-								slashCommand.description.translate(parentProvider, language, slashCommand.bundle)
-							}\n${
-								// If there is some extra information, add it to the parent command, or just leave blank
-								if (parentExtraDocs?.extraInformation != null) {
-									"* **${"header.additionalinfo".translate(parentProvider, language)}**: ${
-										parentExtraDocs.extraInformation!!.translate(
-											parentProvider, language, slashCommand.bundle
-										)
-									}\n"
-								} else {
-									""
+					if (slashCommands.isNotEmpty()) {
+						for (slashCommand in slashCommands) {
+							var commandInfo = "" // The eventual output of this particular slash command
+							// If the slash command list is not empty, format the documents with sub command info
+							if (slashCommand.subCommands.isNotEmpty()) {
+								// For each sub command in the list, format it and add arguments
+								slashCommand.subCommands.forEach { subCommand ->
+									val subProvider = subCommand.translationsProvider
+									val bundle = subCommand.extension.bundle
+									var arguments = addArguments(subCommand, subProvider, bundle, language)
+									// Get any additional documentation from the map
+									var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
+
+									// If the arguments list is empty, acknowledge it
+									if (arguments.isEmpty()) {
+										arguments = "arguments.none".translate(subProvider, language)
+									}
+
+									// Add the title and description of the sub command
+									commandInfo += "#### ${
+										"header.command.name".translate(subProvider, language)
+									}: `${subCommand.parentCommand?.name?.translate(subProvider, language, bundle)} ${
+										subCommand.name.translate(subProvider, language, bundle)
+									}`\n**${"header.command.description".translate(subProvider, language)}**: ${
+										subCommand.description.translate(subProvider, language, bundle)
+									}\n${
+										// Add the result of the command, if one was provided
+										if (subExtraDocs?.commandResult != null) {
+											"**${"header.result".translate(subProvider, language)}**:${
+												subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add the additional info, if there was any provided
+										if (subExtraDocs?.extraInformation != null) {
+											"**${"header.additionalinfo".translate(subProvider, language)}**:${
+												subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add any required bot perms to the document
+										if (subCommand.requiredPerms.isNotEmpty()) {
+											"${"header.permissions.bot".translate(subProvider, language)}:${
+												subCommand.requiredPerms.formatPermissionsSet(language)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add any required member perms to the document
+										if (subCommand.defaultMemberPermissions != null) {
+											"${"header.permissions.member".translate(subProvider, language)}: ${
+												subCommand.defaultMemberPermissions.formatPermissionsSet(language)
+											}\n"
+										} else {
+											""
+										}
+										// Actually add the arguments
+									}\n* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n---\n"
+									subExtraDocs = null // Reset the extra docs to get the new ones on the next loop
 								}
-							}"
-
-							// For each sub command in the list, format it and add arguments
-							slashCommand.subCommands.forEach { subCommand ->
-								var arguments = ""
-								val subProvider = subCommand.translationsProvider // Quick variable to allow for inlining
-								// Get any additional documentation from the map
-								var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
-								val bundle = subCommand.bundle
-
-								// Format each argument in a nice way to read
-								subCommand.arguments?.invoke()?.args?.forEach { arg ->
-									arguments += formatArguments(
-										arg, true, subProvider, subCommand.bundle, language
-									)
+							} else {
+								val slashProvider = slashCommand.translationsProvider // Quick var to allow inlining
+								// Get the extra documents for the command from the map, if there are any
+								var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
+								val bundle = slashCommand.extension.bundle // Quick var to allow for inlining
+								var arguments = addArguments(slashCommand, slashProvider, bundle, language)
+								// If there are no arguments, acknowledge it
+								if (arguments.isEmpty()) {
+									arguments = "arguments.none".translate(slashProvider, language)
 								}
 
-								// If the arguments list is empty, acknowledge it
-								if (arguments.isEmpty()) arguments = "arguments.none".translate(subProvider, language)
-
-								// Add the title and description of the sub command
-								commandInfo += "\t#### ${"header.subcommand.name".translate(subProvider, language)}: `${
-									subCommand.name.translate(subProvider, language, bundle)
-								}`\n\t* **${"header.subcommand.description".translate(subProvider, language)}**: ${
-									subCommand.description.translate(subProvider, language, bundle)
-								}\n${
-									// Add the result of the command, if one was provided
-									if (subExtraDocs?.commandResult != null) {
-										"\t* **${"header.result".translate(subProvider, language)}**:${
-											subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add the additional info, if there was any provided
-									if (subExtraDocs?.extraInformation != null) {
-										"\t* **${"header.additionalinfo".translate(subProvider, language)}**:${
-											subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add any required bot perms to the document
-									if (subCommand.requiredPerms.isNotEmpty()) {
-										"\t* ${"header.permissions.bot".translate(subProvider, language)}:${
-											subCommand.requiredPerms.formatPermissionsSet(language)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add any required member perms to the document
-									if (subCommand.defaultMemberPermissions != null) {
-										"\t* ${"header.permissions.member".translate(subProvider, language)}: ${
-											subCommand.defaultMemberPermissions.formatPermissionsSet(language)
-										}\n"
-									} else {
-										""
-									}
-									// Actually add the arguments
-								}\n\t\t* **${"header.arguments".translate(subProvider, language)}**:\n$arguments\n"
-								subExtraDocs = null // Reset the extra docs to get the new ones on the next loop
-							}
-							parentExtraDocs = null // Reset the parent extra docs to get the new ones in the next loop
-						} else {
-							var arguments = ""
-							val slashProvider = slashCommand.translationsProvider // Quick variable to allow for inlining
-							// Get the extra documents for the command from the map, if there are any
-							var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
-							// Quick variable to allow for inlining
-							val bundle = slashCommand.bundle
-							// Loop through the arguments and format me
-							slashCommand.arguments?.invoke()?.args?.forEach { arg ->
-								arguments += formatArguments(
-									arg, false, slashProvider, bundle, language
-								)
+								// Add the name and description to the doc
+								commandInfo +=
+									"### ${"header.command.name".translate(slashProvider, language)}: `${
+										slashCommand.name.translate(slashProvider, language, bundle)
+									}`\n${"header.command.description".translate(slashProvider, language)}: ${
+										slashCommand.description.translate(slashProvider, language, bundle)
+									}\n${
+										// Add the result of the command if there is one
+										if (extraDocs?.commandResult != null) {
+											"**${"header.result".translate(slashProvider, language)}**:${
+												extraDocs.commandResult!!.translate(slashProvider, language, bundle)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add the extra information if there is any
+										if (extraDocs?.extraInformation != null) {
+											"**${"header.additionalinfo".translate(slashProvider, language)}**:${
+												extraDocs.extraInformation!!.translate(slashProvider, language, bundle)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add the required bot permissions if there are any
+										if (slashCommand.requiredPerms.isNotEmpty()) {
+											"**${"header.permissions.bot".translate(slashProvider, language)}**:${
+												slashCommand.requiredPerms.formatPermissionsSet(language)
+											}\n"
+										} else {
+											""
+										}
+									}${
+										// Add the required member permissions if there are any
+										if (slashCommand.defaultMemberPermissions != null) {
+											"**${"header.permissions.member".translate(slashProvider, language)}**: ${
+												slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
+											}\n"
+										} else {
+											""
+										}
+										// Add the arguments
+									}\n* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n---\n"
+								extraDocs = null // Reset the extra documents for it to be gotten in the next loop
 							}
 
-							// If there are no arguments, acknowledge it
-							if (arguments.isEmpty()) {
-								arguments = "arguments.none".translate(slashProvider, language)
-							}
-
-							// Add the name and description to the doc
-							commandInfo +=
-								"### ${"header.command.name".translate(slashProvider, language)}: `${
-									slashCommand.name.translate(slashProvider, language, bundle)
-								}`\n* ${"header.command.description".translate(slashProvider, language)}: ${
-									slashCommand.description.translate(slashProvider, language, bundle)
-								}\n${
-									// Add the result of the command if there is one
-									if (extraDocs?.commandResult != null) {
-										"* **${"header.result".translate(slashProvider, language)}**:${
-											extraDocs.commandResult!!.translate(slashProvider, language, bundle)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add the extra information if there is any
-									if (extraDocs?.extraInformation != null) {
-										"* **${"header.additionalinfo".translate(slashProvider, language)}**:${
-											extraDocs.extraInformation!!.translate(slashProvider, language, bundle)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add the required bot permissions if there are any
-									if (slashCommand.requiredPerms.isNotEmpty()) {
-										"\t* ${"header.permissions.bot".translate(slashProvider, language)}:${
-											slashCommand.requiredPerms.formatPermissionsSet(language)
-										}\n"
-									} else {
-										""
-									}
-								}${
-									// Add the required member permissions if there are any
-									if (slashCommand.defaultMemberPermissions != null) {
-										"\t* ${"header.permissions.member".translate(slashProvider, language)}: ${
-											slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
-										}\n"
-									} else {
-										""
-									}
-									// Add the arguments
-								}\n\t* ${"header.arguments".translate(slashProvider, language)}:\n$arguments\n"
-							extraDocs = null // Reset the extra documents for it to be gotten in the next loop
+							output += commandInfo // Add the command info to the output
 						}
-
-						output += commandInfo // Add the command info to the output
+					} else {
+						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
 					}
 
 					totalOutput += output // Add the slash info to the total output
@@ -232,7 +203,7 @@ internal object DocsGenerator {
 
 				CommandTypes.MESSAGE -> {
 					// Collect all the message commands into a list from the loaded extensions
-					val messageCommands: MutableList<MessageCommand<*>> = mutableListOf()
+					val messageCommands: MutableList<MessageCommand<*, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						messageCommands.addAll(extension.messageCommands)
 					}
@@ -240,53 +211,57 @@ internal object DocsGenerator {
 					var output = "## ${"title.message".translate(externalTranslationsProvider, language)}\n\n"
 
 					// Loop through the collected message commands
-					for (messageCommand in messageCommands) {
-						// Get the additional docs from the map, if there are any
-						var additionalDocs = messageCommand.additionalDocumentation[messageCommand.name]
-						val provider = messageCommand.translationsProvider // Quick variable to help inlining
-						val bundle = messageCommand.bundle // Quick variable to help inlining
-						output +=
-							// Add the name of the command to the list. Message commands have no description :(
-							"### ${"header.messagecommand.name".translate(provider, language)}: `${
-								messageCommand.name.translate(provider, language, bundle)
-							}`\n${
-								// Add the provided command result, if there is one
-								if (additionalDocs?.commandResult != null) {
-									"* **${"header.result".translate(provider, language)}**:${
-										additionalDocs.commandResult!!.translate(provider, language, bundle)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the provided extra info if there is any
-								if (additionalDocs?.extraInformation != null) {
-									"* **${"header.additionalinfo".translate(provider, language)}**:${
-										additionalDocs.extraInformation!!.translate(provider, language, bundle)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the required bot perms, if there are any
-								if (messageCommand.requiredPerms.isNotEmpty()) {
-									"\t* ${"header.permissions.bot".translate(provider, language)}:${
-										messageCommand.requiredPerms.formatPermissionsSet(language)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the required memeber permissions, if there are any
-								if (messageCommand.defaultMemberPermissions != null) {
-									"\t* ${"header.permissions.member".translate(provider, language)}: ${
-										messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
-									}\n"
-								} else {
-									""
-								}
-							}"
-						additionalDocs = null // Reset the additional docs for next time
+					if (messageCommands.isNotEmpty()) {
+						for (messageCommand in messageCommands) {
+							// Get the additional docs from the map, if there are any
+							var additionalDocs = messageCommand.additionalDocumentation[messageCommand.name]
+							val provider = messageCommand.translationsProvider // Quick variable to help inlining
+							val bundle = messageCommand.extension.bundle // Quick variable to help inlining
+							output +=
+									// Add the name of the command to the list. Message commands have no description :(
+								"### ${"header.messagecommand.name".translate(provider, language)}: `${
+									messageCommand.name.translate(provider, language, bundle)
+								}`\n${
+									// Add the provided command result, if there is one
+									if (additionalDocs?.commandResult != null) {
+										"**${"header.result".translate(provider, language)}**:${
+											additionalDocs.commandResult!!.translate(provider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the provided extra info if there is any
+									if (additionalDocs?.extraInformation != null) {
+										"**${"header.additionalinfo".translate(provider, language)}**:${
+											additionalDocs.extraInformation!!.translate(provider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the required bot perms, if there are any
+									if (messageCommand.requiredPerms.isNotEmpty()) {
+										"**${"header.permissions.bot".translate(provider, language)}**:${
+											messageCommand.requiredPerms.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the required member permissions, if there are any
+									if (messageCommand.defaultMemberPermissions != null) {
+										"**${"header.permissions.member".translate(provider, language)}**: ${
+											messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}\n---\n"
+							additionalDocs = null // Reset the additional docs for next time
+						}
+					} else {
+						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
 					}
 
 					totalOutput += output // Add message commands to the total output
@@ -294,61 +269,65 @@ internal object DocsGenerator {
 
 				CommandTypes.USER -> {
 					// Collect the user commands into a list
-					val userCommands: MutableList<UserCommand<*>> = mutableListOf()
+					val userCommands: MutableList<UserCommand<*, *>> = mutableListOf()
 					loadedExtensions.forEach { extension ->
 						userCommands.addAll(extension.userCommands)
 					}
 
 					var output = "## ${"title.user".translate(externalTranslationsProvider, language)}\n\n"
 
-					// Loop through all the user commands
-					for (userCommand in userCommands) {
-						// Get the additional docs from the map, if there are any
-						var additionalDocs = userCommand.additionalDocumentation[userCommand.name]
-						val provider = userCommand.translationsProvider // Quick variable to aid inlining
-						val bundle = userCommand.bundle // Quick variable to aid inlining
-						output +=
-							// Add the name and info, user commands have no description :(
-							"### ${"header.usercommand.name".translate(provider, language)}: `${
-								userCommand.name.translate(provider, language, userCommand.bundle)
-							}\n${
-								// Add the command result if there is any
-								if (additionalDocs?.commandResult != null) {
-									"* **${"header.result".translate(provider, language)}**:${
-										additionalDocs.commandResult!!.translate(provider, language, bundle)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the extra information if there is any
-								if (additionalDocs?.extraInformation != null) {
-									"* **${"header.additionalinfo".translate(provider, language)}**:${
-										additionalDocs.extraInformation!!.translate(provider, language, bundle)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the required bot permissions if any
-								if (userCommand.requiredPerms.isNotEmpty()) {
-									"\t* ${"header.permissions.bot".translate(provider, language)}:${
-										userCommand.requiredPerms.formatPermissionsSet(language)
-									}\n"
-								} else {
-									""
-								}
-							}${
-								// Add the required member permissions if any
-								if (userCommand.defaultMemberPermissions != null) {
-									"\t* ${"header.permissions.member".translate(provider, language)}: ${
-										userCommand.defaultMemberPermissions.formatPermissionsSet(language)
-									}\n"
-								} else {
-									""
-								}
-							}"
-						additionalDocs = null // Reset the additional docs for next time
+					if (userCommands.isNotEmpty()) {
+						// Loop through all the user commands
+						for (userCommand in userCommands) {
+							// Get the additional docs from the map, if there are any
+							var additionalDocs = userCommand.additionalDocumentation[userCommand.name]
+							val provider = userCommand.translationsProvider // Quick variable to aid inlining
+							val bundle = userCommand.extension.bundle // Quick variable to aid inlining
+							output +=
+									// Add the name and info, user commands have no description :(
+								"### ${"header.usercommand.name".translate(provider, language)}: `${
+									userCommand.name.translate(provider, language, userCommand.bundle)
+								}\n${
+									// Add the command result if there is any
+									if (additionalDocs?.commandResult != null) {
+										"**${"header.result".translate(provider, language)}**:${
+											additionalDocs.commandResult!!.translate(provider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the extra information if there is any
+									if (additionalDocs?.extraInformation != null) {
+										"**${"header.additionalinfo".translate(provider, language)}**:${
+											additionalDocs.extraInformation!!.translate(provider, language, bundle)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the required bot permissions if any
+									if (userCommand.requiredPerms.isNotEmpty()) {
+										"**${"header.permissions.bot".translate(provider, language)}**:${
+											userCommand.requiredPerms.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}${
+									// Add the required member permissions if any
+									if (userCommand.defaultMemberPermissions != null) {
+										"**${"header.permissions.member".translate(provider, language)}**: ${
+											userCommand.defaultMemberPermissions.formatPermissionsSet(language)
+										}\n"
+									} else {
+										""
+									}
+								}\n---\n"
+							additionalDocs = null // Reset the additional docs for next time
+						}
+					} else {
+						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
 					}
 
 					totalOutput += output // Add user commands to the total output

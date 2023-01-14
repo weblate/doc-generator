@@ -14,7 +14,8 @@ import mu.KotlinLogging
 import org.hyacinthbots.docgenerator.annotations.ConfigurationBuilderDSL
 import org.hyacinthbots.docgenerator.builder.ConfigurationBuilder
 import org.hyacinthbots.docgenerator.enums.Environment
-import org.hyacinthbots.docgenerator.excpetions.InvalidEnvironmentVariableException
+import org.hyacinthbots.docgenerator.exceptions.InvalidEnvironmentVariableException
+import org.hyacinthbots.docgenerator.extensions.CommandList
 import org.hyacinthbots.docgenerator.generator.DocsGenerator
 
 private val generatorLogger = KotlinLogging.logger {}
@@ -30,6 +31,14 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 ) {
 	val action = ConfigurationBuilder()
 	action.builder()
+
+	if (action.useBuiltinCommandList) {
+		extensions {
+			add {
+				CommandList(action.commandTypes)
+			}
+		}
+	}
 
 	hooks {
 		afterExtensionsAdded {
