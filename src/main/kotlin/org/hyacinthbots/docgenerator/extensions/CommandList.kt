@@ -46,7 +46,7 @@ public class CommandList(private val enabledCommands: List<CommandTypes>) : Exte
 								Page {
 									title = "${subCommand.parentCommand?.name?.translate(provider, null, bundle)}" +
 											" ${subCommand.name.translate(provider, null, bundle)}"
-									description = subCommand.description
+									description = subCommand.description.translate(provider, null, bundle)
 									createEmbed(arguments, subCommand.requiredPerms, provider, bundle, subExtraDocs)
 								}
 							)
