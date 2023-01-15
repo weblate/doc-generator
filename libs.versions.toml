@@ -10,6 +10,7 @@ detekt = "1.22.0"
 logging = "3.0.4"
 
 junit5 = "5.9.1"
+nexus-publish = "1.1.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
@@ -25,3 +26,4 @@ git-hooks = { id = "com.github.jakemarsden.git-hooks", version.ref = "git-hooks"
 licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "bin-compat" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

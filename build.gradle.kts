@@ -5,7 +5,6 @@ import java.util.*
 plugins {
     `java-library`
     `maven-publish`
-    signing
 
     alias(libs.plugins.kotlin)
 
@@ -13,6 +12,7 @@ plugins {
     alias(libs.plugins.git.hooks)
     alias(libs.plugins.licenser)
     alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.nexus.publish)
 }
 
 group = "org.hyacinthbots"
@@ -61,6 +61,7 @@ java {
     sourceCompatibility = JavaVersion.toVersion(javaVersion)
     targetCompatibility = JavaVersion.toVersion(javaVersion)
 
+    withJavadocJar()
     withSourcesJar()
 }
 
@@ -107,35 +108,15 @@ license {
     include("**/*.kt", "**/*.java", "**/strings**.properties")
 }
 
-val isJitPack get() = "true" == System.getenv("JITPACK")
-
-val mavenVersion: String
-    get() = if (isJitPack) System.getenv("RELEASE_TAG") else {
-        val tag = System.getenv("GITHUB_TAG_NAME")
-        val branch = System.getenv("GITHUB_BRANCH_NAME")
-        when {
-            !tag.isNullOrBlank() -> tag
-            !branch.isNullOrBlank() && branch.startsWith("refs/heads/") ->
-                branch.substringAfter("refs/heads/").replace("/", "-") + "-SNAPSHOT"
-
-            else -> "undefined"
-        }
-    }
-
-val commitHash get() = System.getenv("GITHUB_SHA") ?: "unknown"
-
-val shortCommitHash get() = System.getenv("SHORT_SHA") ?: "unknown"
-
-val isUndefined: Boolean get() = mavenVersion == "undefined"
-val isSnapshot: Boolean get() = mavenVersion.endsWith("-SNAPSHOT")
-val isRelease get() = !isSnapshot && !isUndefined
-
 publishing {
     publications {
-        create<MavenPublication>("doc-generator") {
+        create<MavenPublication>("maven") {
             groupId = "org.hyacinthbots"
             artifactId = "doc-generator"
-            version = mavenVersion
+            version = project.version.toString()
+            from(components["kotlin"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
 
             pom {
                 name.set("doc-generator")
@@ -166,40 +147,27 @@ publishing {
                 }
 
                 scm {
-                    connection.set("scm:git:ssh://github.com/HyacinthBots/doc-generator.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:HyacinthBots/doc-generator.git")
-                }
-            }
-
-            if (!isJitPack) {
-                repositories {
-                    maven {
-                        url = uri(
-                            if (isSnapshot) {
-                                "https://oss.sonatype.org/content/repositories/snapshots/"
-                            } else {
-                                "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                            }
-                        )
-
-                        credentials {
-                            username = System.getenv("NEXUS_USER")
-                            password = System.getenv("NEXUS_PASSWORD")
-                        }
-                    }
+                    connection.set("scm:git:git://github.com/HyacinthBots/doc-generator.git")
+                    developerConnection.set("scm:git:git://github.com/#HyacinthBots/doc-generator.git")
                 }
             }
         }
     }
 }
 
-if (!isJitPack && isRelease) {
-    signing {
-        val signingKey = findProperty("signingKey")?.toString()
-        val signingPassword = findProperty("signingPassword")?.toString()
-        if (signingKey != null && signingPassword != null) {
-            useInMemoryPgpKeys(String(Base64.getDecoder().decode(signingKey)), signingPassword)
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            val ossrhUsername = System.getenv("NEXUS_USER")
+            val ossrhPassword = System.getenv("NEXUS_PASSWORD")
+
+            if (!ossrhUsername.isNullOrEmpty() && !ossrhPassword.isNullOrEmpty()) {
+                username.set(ossrhUsername)
+                password.set(ossrhPassword)
+            }
         }
-        sign(publishing.publications["doc-generator"])
     }
 }
