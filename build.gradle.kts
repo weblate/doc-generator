@@ -6,6 +6,23 @@ object Meta {
     const val githubRepo = "HyacinthBots/doc-generator"
     const val release = "https://s01.oss.sonatype.org/service/local/"
     const val snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
+    val version: String
+        get() {
+            val tag = System.getenv("GITHUB_TAG_NAME")
+            val branch = System.getenv("GITHUB_BRANCH_NAME")
+            return when {
+                !tag.isNullOrBlank() -> tag
+                !branch.isNullOrBlank() && branch.startsWith("refs/heads/") ->
+                    branch.substringAfter("refs/heads/").replace("/", "-") + "-SNAPSHOT"
+
+                else -> "undefined"
+            }
+        }
+
+    val isSnapshot: Boolean get() = version.endsWith("-SNAPSHOT")
+    val isRelease: Boolean get() = !isSnapshot && !isUndefined
+    private val isUndefined: Boolean get() = version == "undefined"
 }
 
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -132,7 +149,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = project.group.toString()
             artifactId = project.name
-            version = project.version.toString()
+            version = Meta.version
             from(components["kotlin"])
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])
@@ -173,20 +190,14 @@ publishing {
             }
         }
     }
-}
 
-nexusPublishing {
     repositories {
-        sonatype {
-            nexusUrl.set(uri(Meta.release))
-            snapshotRepositoryUrl.set(uri(Meta.snapshot))
+        maven {
+            url = uri(if (Meta.isSnapshot) Meta.snapshot else Meta.release)
 
-            val ossrhUsername = System.getenv("NEXUS_USER")
-            val ossrhPassword = System.getenv("NEXUS_PASSWORD")
-
-            if (!ossrhUsername.isNullOrEmpty() && !ossrhPassword.isNullOrEmpty()) {
-                username.set(ossrhUsername)
-                password.set(ossrhPassword)
+            credentials {
+                username = System.getenv("NEXUS_USER")
+                password = System.getenv("NEXUS_PASSWORD")
             }
         }
     }

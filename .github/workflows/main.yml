@@ -42,7 +42,7 @@ jobs:
       - name: Build Artifacts
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build --stacktrace -x test
+          arguments: --stacktrace -x test
           gradle-home-cache-cleanup: true
 
   test:
@@ -69,6 +69,8 @@ jobs:
       NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
       GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
       GPG_SIGNING_PASS: ${{ secrets.GPG_SIGNING_PASS }}
+      GITHUB_BRANCH_NAME: ${{ github.ref }}
+      GITHUB_TAG_NAME: ${{ github.event.release.tag_name }}
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     steps:
@@ -79,5 +81,5 @@ jobs:
       - name: Publish with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build publish closeAndReleaseStagingRepository -x test
+          arguments: publish -x test
           gradle-home-cache-cleanup: true
