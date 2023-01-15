@@ -11,18 +11,22 @@ This project is licensed under the [MIT License](https://mit-license.org/)
 #### Maven:
 
 ```xml
-<!-- Adding the Jitpack repository -->
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+<!-- Adding the Snapshots repository (Optional) -->
+<repository>
+    <id>snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
 ```
 ```xml
 <!-- Adding the dependency. Replace TAG with the latest version -->
 <dependency>
-    <groupId>com.github.hyacinthbots</groupId>
+    <groupId>org.hyacinthbots</groupId>
     <artifactId>doc-generator</artifactId>
     <version>TAG</version>
 </dependency>
@@ -31,33 +35,35 @@ This project is licensed under the [MIT License](https://mit-license.org/)
 #### Gradle (Groovy)
 
 ```groovy
-// Adding the Jitpack repository
 repositories {
+    mavenCentral()
+    // Optionally add the snapshots repository
     maven {
-        name = 'Jitpack'
-        url = 'https://jitpack.io'
+        name "Sonatype snapshots"
+        url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
 // Adding the dependency. Replace TAG with the latest version
 dependencies {
-    implementation('com.github.hyacinthbots:doc-generator:TAG')
+    implementation('org.hyacinthbots:doc-generator:TAG')
 }
 ```
 
 #### Gradle (Kotlin)
 ```kotlin
-// Adding the Jitpack repository
 repositories {
+    mavenCentral()
+    // Optionally add the snapshots repository
     maven {
-        name = "Jitpack"
-        url = uri("https://jitpack.io")
+        name = "Sonatype Snapshots"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
 }
 
 // Adding the dependency. Replace TAG with latest version
 dependencies {
-    implementation("com.github.hyacinthbots:doc-generator:TAG")
+    implementation("org.hyacinthbots:doc-generator:TAG")
 }
 ```
 
