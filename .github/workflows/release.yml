@@ -27,6 +27,7 @@ jobs:
           gradle-home-cache-cleanup: true
 
   publish:
+    depends-on: build
     runs-on: ubuntu-latest
 
     env:
