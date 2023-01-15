@@ -1,9 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.*
+
+object Meta {
+    const val description = "Generate documentation for KordEx bots!"
+    const val githubRepo = "HyacinthBots/doc-generator"
+    const val release = "https://s01.oss.sonatype.org/service/local/"
+    const val snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+}
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     `java-library`
     `maven-publish`
+    signing
 
     alias(libs.plugins.kotlin)
 
@@ -11,6 +20,7 @@ plugins {
     alias(libs.plugins.git.hooks)
     alias(libs.plugins.licenser)
     alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.nexus.publish)
 }
 
 group = "org.hyacinthbots"
@@ -59,6 +69,7 @@ java {
     sourceCompatibility = JavaVersion.toVersion(javaVersion)
     targetCompatibility = JavaVersion.toVersion(javaVersion)
 
+    withJavadocJar()
     withSourcesJar()
 }
 
@@ -105,10 +116,78 @@ license {
     include("**/*.kt", "**/*.java", "**/strings**.properties")
 }
 
+signing {
+    val signingKey = providers.environmentVariable("GPG_SIGNING_KEY")
+    val signingPass = providers.environmentVariable("GPG_SIGNING_PASS")
+
+    if (signingKey.isPresent && signingPass.isPresent) {
+        useInMemoryPgpKeys(signingKey.get(), signingPass.get())
+        val extension = extensions.getByName("publishing") as PublishingExtension
+        sign(extension.publications)
+    }
+}
+
 publishing {
     publications {
-        create<MavenPublication>("publishToMavenLocal") {
-            from(components.getByName("java"))
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = project.version.toString()
+            from(components["kotlin"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+
+            pom {
+                name.set(project.name)
+                description.set(Meta.description)
+                url.set("https://github.com/${Meta.githubRepo}")
+
+                organization {
+                    name.set("HyacinthBots")
+                    url.set("https://github.com/HyacinthBots")
+                }
+
+                developers {
+                    developer {
+                        name.set("The HyacinthBots team")
+                    }
+                }
+
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/${Meta.githubRepo}/issues")
+                }
+
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://mit-license.org/")
+                    }
+                }
+
+                scm {
+                    url.set("https://github.com/${Meta.githubRepo}.git")
+                    connection.set("scm:git:git://github.com/${Meta.githubRepo}.git")
+                    developerConnection.set("scm:git:git://github.com/#${Meta.githubRepo}.git")
+                }
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri(Meta.release))
+            snapshotRepositoryUrl.set(uri(Meta.snapshot))
+
+            val ossrhUsername = System.getenv("NEXUS_USER")
+            val ossrhPassword = System.getenv("NEXUS_PASSWORD")
+
+            if (!ossrhUsername.isNullOrEmpty() && !ossrhPassword.isNullOrEmpty()) {
+                username.set(ossrhUsername)
+                password.set(ossrhPassword)
+            }
         }
     }
 }
