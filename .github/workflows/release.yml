@@ -33,6 +33,8 @@ jobs:
     env:
       NEXUS_USER: ${{ secrets.NEXUS_USER }}
       NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+      GPG_SIGNING_PASS: ${{ secrets.GPG_SIGNING_PASS }}
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     steps:
