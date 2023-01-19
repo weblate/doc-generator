@@ -41,7 +41,7 @@ plugins {
 }
 
 group = "org.hyacinthbots"
-version = "0.1.1"
+version = "0.1.1-legacy-klogging"
 val javaVersion = 17
 
 repositories {
