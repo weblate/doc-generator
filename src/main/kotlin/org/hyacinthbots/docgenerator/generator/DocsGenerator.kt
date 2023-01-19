@@ -195,7 +195,7 @@ internal object DocsGenerator {
 							output += commandInfo // Add the command info to the output
 						}
 					} else {
-						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
+						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n\n---\n"
 					}
 
 					totalOutput += output // Add the slash info to the total output
@@ -261,7 +261,7 @@ internal object DocsGenerator {
 							additionalDocs = null // Reset the additional docs for next time
 						}
 					} else {
-						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
+						output += "${"arguments.none".translate(externalTranslationsProvider, language)}\n\n---\n"
 					}
 
 					totalOutput += output // Add message commands to the total output
@@ -327,7 +327,7 @@ internal object DocsGenerator {
 							additionalDocs = null // Reset the additional docs for next time
 						}
 					} else {
-						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n---\n"
+						output += "arguments.none".translate(externalTranslationsProvider, language) + "\n\n---\n"
 					}
 
 					totalOutput += output // Add user commands to the total output
