@@ -24,7 +24,7 @@ jobs:
       - name: Build Artifacts
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: --stacktrace -x test
+          arguments: build --stacktrace -x test
           gradle-home-cache-cleanup: true
 
   publish:
