@@ -37,24 +37,23 @@ plugins {
     alias(libs.plugins.git.hooks)
     alias(libs.plugins.licenser)
     alias(libs.plugins.binary.compatibility.validator)
-    alias(libs.plugins.nexus.publish)
 }
 
 group = "org.hyacinthbots"
-version = "0.1.1"
+version = "0.1.2"
 val javaVersion = 17
 
 repositories {
     mavenCentral()
 
     maven {
-        name = "Kotlin Discord"
-        url = uri("https://maven.kotlindiscord.com/repository/maven-public/")
+        name = "Sonatype Snapshots (Legacy)"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     maven {
         name = "Sonatype Snapshots"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
 }
 

@@ -19,6 +19,7 @@ public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
 	public field fileFormat Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 	public field filePath Ljava/nio/file/Path;
 	public fun <init> ()V
+	public fun getBotName ()Ljava/lang/String;
 	public fun getCommandTypes ()Ljava/util/List;
 	public fun getEnabled ()Z
 	public fun getEnvironment ()Ljava/lang/String;
@@ -26,6 +27,7 @@ public class org/hyacinthbots/docgenerator/builder/ConfigurationBuilder {
 	public fun getFilePath ()Ljava/nio/file/Path;
 	public final fun getTranslationSupport ()Lorg/hyacinthbots/docgenerator/builder/TranslationSupportBuilder;
 	public fun getUseBuiltinCommandList ()Z
+	public fun setBotName (Ljava/lang/String;)V
 	public fun setCommandTypes (Ljava/util/List;)V
 	public fun setEnabled (Z)V
 	public fun setEnvironment (Ljava/lang/String;)V
@@ -92,7 +94,7 @@ public final class org/hyacinthbots/docgenerator/exceptions/InvalidEnvironmentVa
 }
 
 public final class org/hyacinthbots/docgenerator/extensions/CommandList : com/kotlindiscord/kord/extensions/extensions/Extension {
-	public fun <init> (Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
 	public fun getName ()Ljava/lang/String;
 	public fun setup (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

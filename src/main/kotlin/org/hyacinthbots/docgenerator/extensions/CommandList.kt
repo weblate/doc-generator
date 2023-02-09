@@ -26,7 +26,7 @@ import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import org.hyacinthbots.docgenerator.translate
 
-public class CommandList(private val enabledCommands: List<CommandTypes>) : Extension() {
+public class CommandList(private val botName: String?, private val enabledCommands: List<CommandTypes>) : Extension() {
 	override val name: String = "command-list"
 
 	override suspend fun setup() {
@@ -86,7 +86,7 @@ public class CommandList(private val enabledCommands: List<CommandTypes>) : Exte
 
 		publicSlashCommand {
 			name = "command-list"
-			description = "Shows a list of ${kord.getSelf().username}'s commands!"
+			description = "Shows a list of ${botName ?: kord.getSelf().username}'s commands!"
 
 			action {
 				val paginator = PublicResponsePaginator(
