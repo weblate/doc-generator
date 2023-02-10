@@ -4,7 +4,7 @@ import java.util.*
 object Meta {
     const val description = "Generate documentation for KordEx bots!"
     const val githubRepo = "HyacinthBots/doc-generator"
-    const val release = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/" //"https://s01.oss.sonatype.org/content/repositories/releases/"
+    const val release = "https://s01.oss.sonatype.org/content/repositories/releases/"
     const val snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 
     val version: String
