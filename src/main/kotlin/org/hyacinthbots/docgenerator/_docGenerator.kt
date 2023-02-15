@@ -35,7 +35,7 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 	if (action.useBuiltinCommandList) {
 		extensions {
 			add {
-				CommandList(action.commandTypes)
+				CommandList(action.botName, action.commandTypes)
 			}
 		}
 	}

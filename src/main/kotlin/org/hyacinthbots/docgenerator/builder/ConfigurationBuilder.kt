@@ -57,6 +57,11 @@ public open class ConfigurationBuilder {
 	 */
 	public open var useBuiltinCommandList: Boolean = false
 
+	/**
+	 * The name of the bot the documentation is being generated for. Leave blank to pull it automatically.
+	 */
+	public open var botName: String? = null
+
 	/** @suppress Builder that should not be directly set by the user. */
 	public val translationSupport: TranslationSupportBuilder = TranslationSupportBuilder()
 

@@ -1,3 +1,6 @@
+
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
@@ -37,24 +40,23 @@ plugins {
     alias(libs.plugins.git.hooks)
     alias(libs.plugins.licenser)
     alias(libs.plugins.binary.compatibility.validator)
-    alias(libs.plugins.nexus.publish)
 }
 
 group = "org.hyacinthbots"
-version = "0.1.1-legacy-klogging"
+version = "0.1.2-legacy-klogging"
 val javaVersion = 17
 
 repositories {
     mavenCentral()
 
     maven {
-        name = "Kotlin Discord"
-        url = uri("https://maven.kotlindiscord.com/repository/maven-public/")
+        name = "Sonatype Snapshots (Legacy)"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     maven {
         name = "Sonatype Snapshots"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
 }
 
@@ -80,18 +82,12 @@ gitHooks {
 
 kotlin {
     explicitApi()
+    jvmToolchain(javaVersion)
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion(javaVersion)
-    targetCompatibility = JavaVersion.toVersion(javaVersion)
-
     withJavadocJar()
     withSourcesJar()
-}
-
-if (JavaVersion.current() < JavaVersion.toVersion(javaVersion)) {
-    kotlin.jvmToolchain(javaVersion)
 }
 
 tasks {
@@ -100,13 +96,11 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion.toString()
-            languageVersion = libs.plugins.kotlin.get().version.requiredVersion.substringBeforeLast(".")
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(javaVersion.toString()))
+            languageVersion.set(KotlinVersion.fromVersion(libs.plugins.kotlin.get().version.requiredVersion.substringBeforeLast(".")))
             incremental = true
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn"
-            )
+            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
         }
     }
 

@@ -1,16 +1,14 @@
 [versions]
-kotlin = "1.7.22"
-kordex = "1.5.6-20221216.114038-3"
-
+kotlin = "1.8.0"
+kordex = "1.5.6-20230208.121744-1"
 git-hooks = "0.0.2"
 licenser = "0.6.1"
 bin-compat = "0.12.1"
 
 detekt = "1.22.0"
-logging = "2.1.23"
+logging = "3.0.5"
 
-junit5 = "5.9.1"
-nexus-publish = "1.1.0"
+junit5 = "5.9.2"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
@@ -26,4 +24,3 @@ git-hooks = { id = "com.github.jakemarsden.git-hooks", version.ref = "git-hooks"
 licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "bin-compat" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
