@@ -1,10 +1,10 @@
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 object Meta {
+    const val projectVersion = "0.1.2"
     const val description = "Generate documentation for KordEx bots!"
     const val githubRepo = "HyacinthBots/doc-generator"
     const val release = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -17,7 +17,7 @@ object Meta {
             return when {
                 !tag.isNullOrBlank() -> tag
                 !branch.isNullOrBlank() && branch.startsWith("refs/heads/") ->
-                    branch.substringAfter("refs/heads/").replace("/", "-") + "-SNAPSHOT"
+                    "$projectVersion-SNAPSHOT"
 
                 else -> "undefined"
             }
@@ -43,7 +43,7 @@ plugins {
 }
 
 group = "org.hyacinthbots"
-version = "0.1.2"
+version = Meta.projectVersion
 val javaVersion = 17
 
 repositories {
