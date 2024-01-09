@@ -58,6 +58,7 @@ public final class org/hyacinthbots/docgenerator/enums/CommandTypes : java/lang/
 	public static final field MESSAGE Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 	public static final field SLASH Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 	public static final field USER Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/CommandTypes;
 }
@@ -69,6 +70,7 @@ public final class org/hyacinthbots/docgenerator/enums/CommandTypes$Companion {
 public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/Enum {
 	public static final field DEVELOPMENT Lorg/hyacinthbots/docgenerator/enums/Environment;
 	public static final field PRODUCTION Lorg/hyacinthbots/docgenerator/enums/Environment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/Environment;
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/Environment;
@@ -76,6 +78,7 @@ public final class org/hyacinthbots/docgenerator/enums/Environment : java/lang/E
 
 public final class org/hyacinthbots/docgenerator/enums/SupportedFileFormat : java/lang/Enum {
 	public static final field MARKDOWN Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getFileExtension ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;
 	public static fun values ()[Lorg/hyacinthbots/docgenerator/enums/SupportedFileFormat;

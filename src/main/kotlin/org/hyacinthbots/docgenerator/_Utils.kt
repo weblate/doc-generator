@@ -33,7 +33,7 @@ import kotlin.io.path.exists
  */
 internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
 	if (!path.exists()) {
-		DocsGenerator.generatorLogger.debug("File does not exist, creating...")
+		DocsGenerator.generatorLogger.debug { "File does not exist, creating..." }
 		try {
 			withContext(Dispatchers.IO) {
 				path.createFile()
@@ -42,7 +42,7 @@ internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
 			DocsGenerator.generatorLogger.error(e) { e.message }
 			return
 		}
-		DocsGenerator.generatorLogger.debug("File created successfully...")
+		DocsGenerator.generatorLogger.debug { "File created successfully..." }
 	}
 }
 
@@ -91,9 +91,9 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
 
 	this.values.forEach { perm ->
 		permissionsSet.add(
-			Permission.values.find { it.code.value == perm.code.value }
+			Permission.entries.find { it.code.value == perm.code.value }
 				?.translate(language ?: SupportedLocales.ENGLISH)
-				?: Permission.Unknown().translate(language ?: SupportedLocales.ENGLISH)
+				?: Permission.fromShift(perm.shift).translate(language ?: SupportedLocales.ENGLISH)
 		)
 	}
 	return permissionsSet.toString().replace("[", "").replace("]", "")

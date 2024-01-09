@@ -1,14 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.*
 
 object Meta {
-    const val projectVersion = "0.1.2"
-    const val description = "Generate documentation for KordEx bots!"
-    const val githubRepo = "HyacinthBots/doc-generator"
-    const val release = "https://s01.oss.sonatype.org/content/repositories/releases/"
-    const val snapshot = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    const val PROJECT_VERSION = "0.1.3"
+    const val DESCRIPTION = "Generate documentation for KordEx bots!"
+    const val GITHUB_REPO = "HyacinthBots/doc-generator"
+    const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
+    const val SNAPSHOT = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 
     val version: String
         get() {
@@ -17,7 +16,7 @@ object Meta {
             return when {
                 !tag.isNullOrBlank() -> tag
                 !branch.isNullOrBlank() && branch.startsWith("refs/heads/") ->
-                    "$projectVersion-SNAPSHOT"
+                    "$PROJECT_VERSION-SNAPSHOT"
 
                 else -> "undefined"
             }
@@ -43,7 +42,7 @@ plugins {
 }
 
 group = "org.hyacinthbots"
-version = Meta.projectVersion
+version = Meta.PROJECT_VERSION
 val javaVersion = 17
 
 repositories {
@@ -117,7 +116,7 @@ tasks {
 
 detekt {
     buildUponDefaultConfig = true
-    config = files("$rootDir/detekt.yml")
+    config.from(files("$rootDir/detekt.yml"))
 
     autoCorrect = true
 }
@@ -150,8 +149,8 @@ publishing {
 
             pom {
                 name.set(project.name)
-                description.set(Meta.description)
-                url.set("https://github.com/${Meta.githubRepo}")
+                description.set(Meta.DESCRIPTION)
+                url.set("https://github.com/${Meta.GITHUB_REPO}")
 
                 organization {
                     name.set("HyacinthBots")
@@ -166,7 +165,7 @@ publishing {
 
                 issueManagement {
                     system.set("GitHub")
-                    url.set("https://github.com/${Meta.githubRepo}/issues")
+                    url.set("https://github.com/${Meta.GITHUB_REPO}/issues")
                 }
 
                 licenses {
@@ -177,9 +176,9 @@ publishing {
                 }
 
                 scm {
-                    url.set("https://github.com/${Meta.githubRepo}.git")
-                    connection.set("scm:git:git://github.com/${Meta.githubRepo}.git")
-                    developerConnection.set("scm:git:git://github.com/#${Meta.githubRepo}.git")
+                    url.set("https://github.com/${Meta.GITHUB_REPO}.git")
+                    connection.set("scm:git:git://github.com/${Meta.GITHUB_REPO}.git")
+                    developerConnection.set("scm:git:git://github.com/#${Meta.GITHUB_REPO}.git")
                 }
             }
         }
@@ -187,7 +186,7 @@ publishing {
 
     repositories {
         maven {
-            url = uri(if (Meta.isSnapshot) Meta.snapshot else Meta.release)
+            url = uri(if (Meta.isSnapshot) Meta.SNAPSHOT else Meta.RELEASE)
 
             credentials {
                 username = System.getenv("NEXUS_USER")

@@ -15,9 +15,9 @@ import com.kotlindiscord.kord.extensions.commands.application.user.UserCommand
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.i18n.ResourceBundleTranslations
 import com.kotlindiscord.kord.extensions.i18n.SupportedLocales
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mu.KotlinLogging
 import org.hyacinthbots.docgenerator.addArguments
 import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.enums.CommandTypes
@@ -29,7 +29,7 @@ import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
 import org.hyacinthbots.docgenerator.translate
 import java.io.IOException
 import java.nio.file.Path
-import java.util.*
+import java.util.Locale
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 
@@ -398,7 +398,7 @@ internal object DocsGenerator {
 							writer.flush()
 							writer.close()
 						}
-						generatorLogger.info("Written documents for ${language.toLanguageTag()}!")
+						generatorLogger.info { "Written documents for ${language.toLanguageTag()}!" }
 					}
 				} else {
 					// Generate the contents in the target language
@@ -410,7 +410,7 @@ internal object DocsGenerator {
 						writer.flush()
 						writer.close()
 					}
-					generatorLogger.info("Written documents!")
+					generatorLogger.info { "Written documents!" }
 				}
 			}
 		}

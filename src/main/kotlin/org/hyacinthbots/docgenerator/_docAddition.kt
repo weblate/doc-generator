@@ -68,9 +68,11 @@ internal var ApplicationCommand<*>.subCommandAdditionalDocumentation: MutableMap
 /**
  * Private variable to get the persistence of additional docs to work.
  */
+@Suppress("ObjectPropertyName")
 private var _additionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // I hate but it works
 
 /**
  * Private variable to get the persistence of additional docs to work.
  */
+@Suppress("ObjectPropertyName")
 private var _subCommandAdditionalDocumentation: MutableMap<String, DocAdditionBuilder?> = mutableMapOf() // More hatred

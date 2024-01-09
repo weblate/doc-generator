@@ -65,7 +65,7 @@ class UtilsTest {
 	@Test
 	@Order(4)
 	fun `CommandType ALL contains all command types`(): Unit = runBlocking {
-		CommandTypes.values().forEach {
+		CommandTypes.entries.forEach {
 			assertTrue("All commands types were not present in the list: $it is missing.") {
 				it in CommandTypes.ALL
 			}

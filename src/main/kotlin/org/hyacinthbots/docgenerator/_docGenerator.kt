@@ -10,7 +10,7 @@
 package org.hyacinthbots.docgenerator
 
 import com.kotlindiscord.kord.extensions.builders.ExtensibleBotBuilder
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.hyacinthbots.docgenerator.annotations.ConfigurationBuilderDSL
 import org.hyacinthbots.docgenerator.builder.ConfigurationBuilder
 import org.hyacinthbots.docgenerator.enums.Environment
@@ -43,19 +43,19 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 	hooks {
 		afterExtensionsAdded {
 			if (!action.enabled) {
-				generatorLogger.debug("Doc generation disabled, not generating!")
+				generatorLogger.debug { "Doc generation disabled, not generating!" }
 				return@afterExtensionsAdded
 			}
 
 			when (action.environment.lowercase()) {
 				Environment.PRODUCTION.value -> {
-					generatorLogger.debug("Production environment detected, not generating!")
+					generatorLogger.debug { "Production environment detected, not generating!" }
 					return@afterExtensionsAdded
 				}
 
 				Environment.DEVELOPMENT.value -> {
 					if (action.commandTypes.isEmpty()) {
-						generatorLogger.error("No command types have been specified! Please specify command types to document")
+						generatorLogger.error { "No command types have been specified! Please specify command types to document" }
 						return@afterExtensionsAdded
 					}
 
