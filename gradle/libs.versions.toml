@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.22"
-kordex = "1.7.1-20240117.210840-21"
+kordex = "1.7.2-20240221.102953-1"
 git-hooks = "0.0.2"
 licenser = "0.6.1"
 bin-compat = "0.14.0"
@@ -8,7 +8,7 @@ bin-compat = "0.14.0"
 detekt = "1.23.5"
 logging = "6.0.3"
 
-junit5 = "5.10.1"
+junit5 = "5.10.2"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
