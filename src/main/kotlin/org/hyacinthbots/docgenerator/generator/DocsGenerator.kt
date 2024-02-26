@@ -88,7 +88,7 @@ internal object DocsGenerator {
 									}
 
 									// Add the title and description of the sub command
-									commandInfo += "#### ${
+									commandInfo += "### ${
 										"header.command.name".translate(subProvider, language)
 									}: `${subCommand.parentCommand?.name?.translate(subProvider, language, bundle)} ${
 										subCommand.name.translate(subProvider, language, bundle)
@@ -97,7 +97,7 @@ internal object DocsGenerator {
 									}\n${
 										// Add the result of the command, if one was provided
 										if (subExtraDocs?.commandResult != null) {
-											"**${"header.result".translate(subProvider, language)}**:${
+											"\n**${"header.result".translate(subProvider, language)}**: ${
 												subExtraDocs.commandResult!!.translate(subProvider, language, bundle)
 											}\n"
 										} else {
@@ -106,7 +106,7 @@ internal object DocsGenerator {
 									}${
 										// Add the additional info, if there was any provided
 										if (subExtraDocs?.extraInformation != null) {
-											"**${"header.additionalinfo".translate(subProvider, language)}**:${
+											"\n**${"header.additionalinfo".translate(subProvider, language)}**: ${
 												subExtraDocs.extraInformation!!.translate(subProvider, language, bundle)
 											}\n"
 										} else {
@@ -115,7 +115,7 @@ internal object DocsGenerator {
 									}${
 										// Add any required bot perms to the document
 										if (subCommand.requiredPerms.isNotEmpty()) {
-											"${"header.permissions.bot".translate(subProvider, language)}:${
+											"\n**${"header.permissions.bot".translate(subProvider, language)}**:${
 												subCommand.requiredPerms.formatPermissionsSet(language)
 											}\n"
 										} else {
@@ -124,7 +124,7 @@ internal object DocsGenerator {
 									}${
 										// Add any required member perms to the document
 										if (subCommand.defaultMemberPermissions != null) {
-											"${"header.permissions.member".translate(subProvider, language)}: ${
+											"\n**${"header.permissions.member".translate(subProvider, language)}**: ${
 												subCommand.defaultMemberPermissions.formatPermissionsSet(language)
 											}\n"
 										} else {
@@ -149,12 +149,12 @@ internal object DocsGenerator {
 								commandInfo +=
 									"### ${"header.command.name".translate(slashProvider, language)}: `${
 										slashCommand.name.translate(slashProvider, language, bundle)
-									}`\n${"header.command.description".translate(slashProvider, language)}: ${
+									}`\n**${"header.command.description".translate(slashProvider, language)}**: ${
 										slashCommand.description.translate(slashProvider, language, bundle)
 									}\n${
 										// Add the result of the command if there is one
 										if (extraDocs?.commandResult != null) {
-											"**${"header.result".translate(slashProvider, language)}**:${
+											"\n**${"header.result".translate(slashProvider, language)}**: ${
 												extraDocs.commandResult!!.translate(slashProvider, language, bundle)
 											}\n"
 										} else {
@@ -163,7 +163,7 @@ internal object DocsGenerator {
 									}${
 										// Add the extra information if there is any
 										if (extraDocs?.extraInformation != null) {
-											"**${"header.additionalinfo".translate(slashProvider, language)}**:${
+											"\n**${"header.additionalinfo".translate(slashProvider, language)}**: ${
 												extraDocs.extraInformation!!.translate(slashProvider, language, bundle)
 											}\n"
 										} else {
@@ -172,7 +172,7 @@ internal object DocsGenerator {
 									}${
 										// Add the required bot permissions if there are any
 										if (slashCommand.requiredPerms.isNotEmpty()) {
-											"**${"header.permissions.bot".translate(slashProvider, language)}**:${
+											"\n**${"header.permissions.bot".translate(slashProvider, language)}**:${
 												slashCommand.requiredPerms.formatPermissionsSet(language)
 											}\n"
 										} else {
@@ -181,7 +181,7 @@ internal object DocsGenerator {
 									}${
 										// Add the required member permissions if there are any
 										if (slashCommand.defaultMemberPermissions != null) {
-											"**${"header.permissions.member".translate(slashProvider, language)}**: ${
+											"\n**${"header.permissions.member".translate(slashProvider, language)}**: ${
 												slashCommand.defaultMemberPermissions.formatPermissionsSet(language)
 											}\n"
 										} else {
@@ -224,7 +224,7 @@ internal object DocsGenerator {
 								}`\n${
 									// Add the provided command result, if there is one
 									if (additionalDocs?.commandResult != null) {
-										"**${"header.result".translate(provider, language)}**:${
+										"\n**${"header.result".translate(provider, language)}**: ${
 											additionalDocs.commandResult!!.translate(provider, language, bundle)
 										}\n"
 									} else {
@@ -233,7 +233,7 @@ internal object DocsGenerator {
 								}${
 									// Add the provided extra info if there is any
 									if (additionalDocs?.extraInformation != null) {
-										"**${"header.additionalinfo".translate(provider, language)}**:${
+										"\n**${"header.additionalinfo".translate(provider, language)}**: ${
 											additionalDocs.extraInformation!!.translate(provider, language, bundle)
 										}\n"
 									} else {
@@ -242,7 +242,7 @@ internal object DocsGenerator {
 								}${
 									// Add the required bot perms, if there are any
 									if (messageCommand.requiredPerms.isNotEmpty()) {
-										"**${"header.permissions.bot".translate(provider, language)}**:${
+										"\n**${"header.permissions.bot".translate(provider, language)}**:${
 											messageCommand.requiredPerms.formatPermissionsSet(language)
 										}\n"
 									} else {
@@ -251,7 +251,7 @@ internal object DocsGenerator {
 								}${
 									// Add the required member permissions, if there are any
 									if (messageCommand.defaultMemberPermissions != null) {
-										"**${"header.permissions.member".translate(provider, language)}**: ${
+										"\n**${"header.permissions.member".translate(provider, language)}**: ${
 											messageCommand.defaultMemberPermissions.formatPermissionsSet(language)
 										}\n"
 									} else {
@@ -290,7 +290,7 @@ internal object DocsGenerator {
 								}\n${
 									// Add the command result if there is any
 									if (additionalDocs?.commandResult != null) {
-										"**${"header.result".translate(provider, language)}**:${
+										"\n**${"header.result".translate(provider, language)}**: ${
 											additionalDocs.commandResult!!.translate(provider, language, bundle)
 										}\n"
 									} else {
@@ -299,7 +299,7 @@ internal object DocsGenerator {
 								}${
 									// Add the extra information if there is any
 									if (additionalDocs?.extraInformation != null) {
-										"**${"header.additionalinfo".translate(provider, language)}**:${
+										"\n**${"header.additionalinfo".translate(provider, language)}**: ${
 											additionalDocs.extraInformation!!.translate(provider, language, bundle)
 										}\n"
 									} else {
@@ -308,7 +308,7 @@ internal object DocsGenerator {
 								}${
 									// Add the required bot permissions if any
 									if (userCommand.requiredPerms.isNotEmpty()) {
-										"**${"header.permissions.bot".translate(provider, language)}**:${
+										"\n**${"header.permissions.bot".translate(provider, language)}**:${
 											userCommand.requiredPerms.formatPermissionsSet(language)
 										}\n"
 									} else {
@@ -317,7 +317,7 @@ internal object DocsGenerator {
 								}${
 									// Add the required member permissions if any
 									if (userCommand.defaultMemberPermissions != null) {
-										"**${"header.permissions.member".translate(provider, language)}**: ${
+										"\n**${"header.permissions.member".translate(provider, language)}**: ${
 											userCommand.defaultMemberPermissions.formatPermissionsSet(language)
 										}\n"
 									} else {

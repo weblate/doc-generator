@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Meta {
-    const val PROJECT_VERSION = "0.1.4"
+    const val PROJECT_VERSION = "0.1.5"
     const val DESCRIPTION = "Generate documentation for KordEx bots!"
     const val GITHUB_REPO = "HyacinthBots/doc-generator"
     const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -27,7 +27,6 @@ object Meta {
     private val isUndefined: Boolean get() = version == "undefined"
 }
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     `java-library`
     `maven-publish`
