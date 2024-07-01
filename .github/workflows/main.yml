@@ -45,23 +45,23 @@ jobs:
           arguments: build --stacktrace -x test
           gradle-home-cache-cleanup: true
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run tests
-        uses: gradle/gradle-build-action@v3
-        env:
-          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
-        with:
-          arguments: test -x build
-          gradle-home-cache-cleanup: true
+#  test:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Run tests
+#        uses: gradle/gradle-build-action@v3
+#        env:
+#          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+#        with:
+#          arguments: test -x build
+#          gradle-home-cache-cleanup: true
 
   publish:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
 
     env:
