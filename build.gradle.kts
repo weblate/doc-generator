@@ -42,7 +42,7 @@ plugins {
 
 group = "org.hyacinthbots"
 version = Meta.PROJECT_VERSION
-val javaVersion = 17
+val javaVersion = 21
 
 repositories {
     mavenCentral()
