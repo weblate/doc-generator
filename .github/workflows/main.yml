@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check API
+
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-        with:
-          arguments: clean apiCheck -x build
-          gradle-home-cache-cleanup: true
+      - name: Build Project
+        run: ./gradlew clean apiCheck -x build
 
   build:
     needs: check-api
