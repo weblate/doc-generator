@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Meta {
-    const val PROJECT_VERSION = "0.2.0"
+    const val PROJECT_VERSION = "0.2.1"
     const val DESCRIPTION = "Generate documentation for KordEx bots!"
     const val GITHUB_REPO = "HyacinthBots/doc-generator"
     const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -42,7 +42,8 @@ plugins {
 
 group = "org.hyacinthbots"
 version = Meta.PROJECT_VERSION
-val javaVersion = 21
+
+val javaVersion = 13  // KordEx minimum pinned Java version
 
 repositories {
     mavenCentral()
@@ -55,6 +56,11 @@ repositories {
     maven {
         name = "Sonatype Snapshots"
         url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+    }
+
+    maven {
+        name = "Kord Extensions (Snapshots)"
+        url = uri("https://snapshots-repo.kordex.dev")
     }
 }
 
@@ -80,7 +86,6 @@ gitHooks {
 
 kotlin {
     explicitApi()
-    jvmToolchain(javaVersion)
 }
 
 java {
@@ -106,6 +111,9 @@ tasks {
         options.encoding = "UTF-8"
         options.isDeprecation = true
         options.release.set(javaVersion)
+
+	    sourceCompatibility = javaVersion.toString()
+	    targetCompatibility = javaVersion.toString()
     }
 
     wrapper {
