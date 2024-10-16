@@ -60,7 +60,7 @@ internal fun String.translate(
 	language: Locale?,
 	bundle: String? = DEFAULT_BUNDLE_NAME
 ): String =
-	provider.translate(this, language ?: SupportedLocales.ENGLISH, bundle)
+	provider.translate(this, bundle, language ?: SupportedLocales.ENGLISH)
 
 /**
  * Extension function for formatting a [MutableSet] of [Permission]s into a string, possible localised if necessary.
