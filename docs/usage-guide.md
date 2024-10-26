@@ -72,7 +72,7 @@ docGenerator {
     enabled = true
     fileFormat = SupportedFileFormat.MARKDOWN
     commandTypes = listOf(CommandType.SLASH)
-    commandTypes = CommandType.SLASH
+    // commandTypes = CommandType.ALL  
 }
 ```
 </details>
@@ -91,7 +91,7 @@ must be provided are: `production` or `development`. If the option is neither of
 docGenerator {
     enabled = true
     fileFormat = SupportedFileFormat.MARKDOWN
-    fielPath = Path("./docs/commands.md")
+    filePath = Path("./docs/commands.md")
     commandTypes = listOf(CommandType.SLASH)
     environment = env("ENVIRONMENT")
 }
@@ -126,7 +126,8 @@ docGenerator {
 
 Some bots may use translations in their projects, never fear, doc-gen comes with excellent native support for 
 translations, meaning all you have to do is specify what languages to translate to, in the builder! Just add the 
-`translationSupport` DSL to add your languages.
+`translationSupport` DSL to add your languages. The translation builder needs to know the name of the resource bundle
+your translations are stored in. Provide this by settings `bundleName`.
 
 <details>
     <summary>With translations option.</summary>
@@ -141,6 +142,7 @@ docGenerator {
     useBuiltinCommandList = true
     translationSupport {
         enableTranslations = true
+        bundleName = "testbot"
         supportedLanguages = listOf(Locale.ENGLISH_GREAT_BRITAIN, Locale.GERMAN)
     }
 }

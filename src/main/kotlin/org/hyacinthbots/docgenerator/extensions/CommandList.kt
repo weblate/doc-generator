@@ -14,17 +14,19 @@ import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kordex.core.commands.application.ApplicationCommand
 import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.publicSlashCommand
-import dev.kordex.core.i18n.TranslationsProvider
+import dev.kordex.core.i18n.toKey
 import dev.kordex.core.pagination.PublicResponsePaginator
 import dev.kordex.core.pagination.pages.Page
 import dev.kordex.core.pagination.pages.Pages
+import docgenerator.i18n.Translations
+import org.hyacinthbots.docgenerator.DEFAULT_BUNDLE_NAME
 import org.hyacinthbots.docgenerator.addArguments
 import org.hyacinthbots.docgenerator.additionalDocumentation
 import org.hyacinthbots.docgenerator.builder.DocAdditionBuilder
 import org.hyacinthbots.docgenerator.enums.CommandTypes
+import org.hyacinthbots.docgenerator.externalBundle
 import org.hyacinthbots.docgenerator.formatPermissionsSet
 import org.hyacinthbots.docgenerator.subCommandAdditionalDocumentation
-import org.hyacinthbots.docgenerator.translate
 
 public class CommandList(private val botName: String?, private val enabledCommands: List<CommandTypes>) : Extension() {
 	override val name: String = "command-list"
@@ -37,33 +39,29 @@ public class CommandList(private val botName: String?, private val enabledComman
 				it.slashCommands.forEach { slashCommand ->
 					if (slashCommand.subCommands.isNotEmpty()) {
 						slashCommand.subCommands.forEach { subCommand ->
-							val provider = subCommand.translationsProvider
-							val bundle = subCommand.extension.bundle
-							var arguments: String? = addArguments(subCommand, provider, bundle, null)
+							var arguments: String? = addArguments(subCommand)
 							if (arguments?.isEmpty() == true) arguments = null
-							var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name]
+							var subExtraDocs = subCommand.subCommandAdditionalDocumentation[subCommand.name.translate()]
 							pagesObj.addPage(
 								Page {
-									title = "${subCommand.parentCommand?.name?.translate(provider, null, bundle)}" +
-											" ${subCommand.name.translate(provider, null, bundle)}"
-									description = subCommand.description.translate(provider, null, bundle)
-									createEmbed(arguments, subCommand.requiredPerms, provider, bundle, subExtraDocs)
+									title = "${subCommand.parentCommand?.name?.translate()}" +
+											" ${subCommand.name.translate()}"
+									description = subCommand.description.translate()
+									createEmbed(arguments, subCommand.requiredPerms, externalBundle, subExtraDocs)
 								}
 							)
 							subExtraDocs = null
 						}
 					} else {
 						var arguments: String?
-						val provider = slashCommand.translationsProvider
-						val bundle = slashCommand.extension.bundle
-						arguments = addArguments(slashCommand, provider, bundle, null)
+						arguments = addArguments(slashCommand)
 						if (arguments.isEmpty() == true) arguments = null
-						var extraDocs = slashCommand.additionalDocumentation[slashCommand.name]
+						var extraDocs = slashCommand.additionalDocumentation[slashCommand.name.translate()]
 						pagesObj.addPage(
 							Page {
-								title = slashCommand.name.translate(provider, null, bundle)
-								description = slashCommand.description.translate(provider, null, bundle)
-								createEmbed(arguments, slashCommand.requiredPerms, provider, bundle, extraDocs)
+								title = slashCommand.name.translate()
+								description = slashCommand.description.translate()
+								createEmbed(arguments, slashCommand.requiredPerms, externalBundle, extraDocs)
 							}
 						)
 						extraDocs = null
@@ -85,8 +83,8 @@ public class CommandList(private val botName: String?, private val enabledComman
 		}
 
 		publicSlashCommand {
-			name = "command-list"
-			description = "Shows a list of ${botName ?: kord.getSelf().username}'s commands!"
+			name = Translations.Commandlist.name
+			description = Translations.Commandlist.description.withOrdinalPlaceholders(botName ?: kord.getSelf().username)
 
 			action {
 				val paginator = PublicResponsePaginator(
@@ -108,14 +106,12 @@ public class CommandList(private val botName: String?, private val enabledComman
 	 *
 	 * @param args The command arguments string
 	 * @param requiredPerms The required permissions to run the command
-	 * @param provider The translation provider
 	 * @param bundle The bundle to get the translations from
 	 * @param extraDocs Any extra documentation for the command
 	 */
 	private fun EmbedBuilder.createEmbed(
 		args: String?,
 		requiredPerms: MutableSet<Permission>,
-		provider: TranslationsProvider,
 		bundle: String?,
 		extraDocs: DocAdditionBuilder?
 	) {
@@ -127,31 +123,29 @@ public class CommandList(private val botName: String?, private val enabledComman
 			name = "Permissions"
 			value = if (requiredPerms.isNotEmpty()) {
 				"* ${
-					"header.permissions.bot".translate(provider, null, bundle)
+					Translations.Header.Permissions.bot.translate()
 				}:${requiredPerms.formatPermissionsSet(null)}\n"
 			} else {
 				"None"
 			}
 		}
 		if (extraDocs?.commandResult != null) {
+			val resultAsKey = extraDocs.commandResult!!.toKey(bundle ?: DEFAULT_BUNDLE_NAME)
 			field {
 				name = "Result"
 				value =
-					"* **${"header.result".translate(provider, null, bundle)}**:${
-						extraDocs.commandResult!!.translate(provider, null, bundle)
-					}\n"
+					"* **${Translations.Header.result}**:${resultAsKey.translate()}\n"
 			}
 		}
 	}
 
 	private fun <T : ApplicationCommand<*>> createMessageUserCommandDocs(command: T, pagesObj: Pages) {
 		val provider = command.translationsProvider
-		val bundle = command.extension.bundle
-		var extraDocs = command.additionalDocumentation[command.name]
+		var extraDocs = command.additionalDocumentation[command.name.translate()]
 		pagesObj.addPage(
 			Page {
-				title = command.name.translate(provider, null, bundle)
-				createEmbed(null, command.requiredPerms, provider, bundle, extraDocs)
+				title = command.name.translate(provider, null, externalBundle)
+				createEmbed(null, command.requiredPerms, externalBundle, extraDocs)
 			}
 		)
 		extraDocs = null

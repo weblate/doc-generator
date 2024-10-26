@@ -46,9 +46,12 @@ public class org/hyacinthbots/docgenerator/builder/DocAdditionBuilder {
 }
 
 public class org/hyacinthbots/docgenerator/builder/TranslationSupportBuilder {
+	public field bundleName Ljava/lang/String;
 	public fun <init> ()V
+	public fun getBundleName ()Ljava/lang/String;
 	public fun getEnableTranslations ()Z
 	public fun getSupportedLanguages ()Ljava/util/List;
+	public fun setBundleName (Ljava/lang/String;)V
 	public fun setEnableTranslations (Z)V
 	public fun setSupportedLanguages (Ljava/util/List;)V
 }

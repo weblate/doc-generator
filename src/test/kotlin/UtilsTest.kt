@@ -9,13 +9,13 @@
 
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
-import dev.kordex.core.i18n.ResourceBundleTranslations
 import dev.kordex.core.i18n.SupportedLocales
+import dev.kordex.core.i18n.types.Bundle
+import dev.kordex.core.i18n.types.Key
 import kotlinx.coroutines.runBlocking
 import org.hyacinthbots.docgenerator.enums.CommandTypes
 import org.hyacinthbots.docgenerator.findOrCreateDocumentsFile
 import org.hyacinthbots.docgenerator.formatPermissionsSet
-import org.hyacinthbots.docgenerator.translate
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -25,9 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 private val path = Path("./build/testfile.md")
-private val translationsProvider = ResourceBundleTranslations { defaultLocale }
 private val defaultLocale = SupportedLocales.ENGLISH
-private const val BUNDLE = "test"
 
 class UtilsTest {
 	@Test
@@ -43,10 +41,11 @@ class UtilsTest {
 	@Test
 	@Order(2)
 	fun `test translate`(): Unit = runBlocking {
-		val english = "test.1".translate(translationsProvider, defaultLocale, BUNDLE)
+		val test1 = Key("test.1", Bundle("test"))
+		val english = test1.translateLocale(defaultLocale)
 		assertEquals("Good evening", english)
 
-		val german = "test.1".translate(translationsProvider, SupportedLocales.GERMAN, BUNDLE)
+		val german = test1.translateLocale(SupportedLocales.GERMAN)
 		assertEquals("Guten Abend", german)
 	}
 

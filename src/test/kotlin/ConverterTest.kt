@@ -45,7 +45,7 @@ class ConverterTest {
 		assertDoesNotThrow {
 			converter1 = ConverterFormatter(
 				"dev.kordex.core.commands.converters.impl.ChannelConverter",
-				"channel"
+				"Channel"
 			).formatConverter()
 
 			converter2 = ConverterFormatter(
@@ -55,7 +55,7 @@ class ConverterTest {
 
 			converter3 = ConverterFormatter(
 				"dev.kordex.core.commands.converters.SingleToDefaultingConverter",
-				"channel"
+				"Channel"
 			).formatConverter()
 		}
 

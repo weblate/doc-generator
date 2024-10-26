@@ -14,7 +14,6 @@ import dev.kord.common.entity.Permissions
 import dev.kordex.core.commands.Argument
 import dev.kordex.core.commands.application.slash.SlashCommand
 import dev.kordex.core.i18n.SupportedLocales
-import dev.kordex.core.i18n.TranslationsProvider
 import dev.kordex.core.utils.translate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,22 +44,6 @@ internal suspend inline fun findOrCreateDocumentsFile(path: Path) {
 		DocsGenerator.generatorLogger.debug { "File created successfully..." }
 	}
 }
-
-/**
- * Extension function for translating strings to a language.
- *
- * @param provider The translation provider
- * @param language The [Locale] to translate into
- * @param bundle The bundle that has the translation, `doc-generator` by default
- *
- * @return The localised translation string
- */
-internal fun String.translate(
-	provider: TranslationsProvider,
-	language: Locale?,
-	bundle: String? = DEFAULT_BUNDLE_NAME
-): String =
-	provider.translate(this, bundle, language ?: SupportedLocales.ENGLISH)
 
 /**
  * Extension function for formatting a [MutableSet] of [Permission]s into a string, possible localised if necessary.
@@ -103,49 +86,37 @@ internal fun Permissions?.formatPermissionsSet(language: Locale?): String? {
  * function for formatting the arguments of a command into a nice string.
  *
  * @param arg The argument to translate
- * @param provider The translation provider
- * @param bundle The bundle to get the translations from
  * @param language the [Locale] to translate into
  *
  * @return The arguments, formatted into a presentable manner
  */
 internal fun formatArguments(
 	arg: Argument<*>,
-	provider: TranslationsProvider,
-	bundle: String?,
-	language: Locale?
+	language: Locale = SupportedLocales.ENGLISH
 ): String =
-	"\t* `${arg.displayName.translate(provider, language, bundle)}` - " +
-			"${arg.description.translate(provider, language, bundle)} - " +
-			"${
-				if (language != null) {
-					ConverterFormatter(
-						"${arg.converter}", arg.converter.signatureTypeString, language
-					).formatConverter(language)
-				} else {
-					ConverterFormatter("${arg.converter}", arg.converter.signatureTypeString).formatConverter()
-				}
-			}\n"
+	"\t* `${arg.displayName.translateLocale(language)}` - " +
+		"${arg.description.translateLocale(language)} - " +
+		"${
+			ConverterFormatter(
+				"${arg.converter}", arg.converter.signatureType.translateLocale(language)
+			).formatConverter(language)
+		}\n"
 
 /**
  * Adds all a commands arguments to a string.
  *
  * @param command The command to get the args from
- * @param provider The translation provider
- * @param bundle The bundle to get the translations from
  * @param language The [Locale] to translate into
  *
  * @return A string containing all the commands arguments.
  */
 internal fun addArguments(
 	command: SlashCommand<*, *, *>,
-	provider: TranslationsProvider,
-	bundle: String?,
-	language: Locale?
+	language: Locale = SupportedLocales.ENGLISH
 ): String {
 	var argumentsString = ""
 	command.arguments?.invoke()?.args?.forEach { arg ->
-		argumentsString += formatArguments(arg, provider, bundle, language)
+		argumentsString += formatArguments(arg, language)
 	}
 
 	return argumentsString

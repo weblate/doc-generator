@@ -23,6 +23,11 @@ public open class TranslationSupportBuilder {
 	public open var enableTranslations: Boolean = false
 
 	/**
+	 * The translation bundle from the parent bot.
+	 */
+	public open lateinit var bundleName: String
+
+	/**
 	 * The languages to support. Defaults to English.
 	 */
 	public open var supportedLanguages: List<Locale> = emptyList()

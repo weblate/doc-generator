@@ -21,12 +21,13 @@ import org.hyacinthbots.docgenerator.builder.DocAdditionBuilder
  * @see DocAdditionBuilder
  */
 @DocAdditionBuilderDSL
+// TODO the translating here may potentially require a locale, do testing and find out
 public suspend fun ApplicationCommand<*>.additionalDocumentation(
 	builder: suspend DocAdditionBuilder.() -> Unit
 ) {
 	val action = DocAdditionBuilder()
 	action.builder()
-	additionalDocumentation[this.name] = action
+	additionalDocumentation[this.name.translate()] = action
 }
 
 /**
@@ -42,7 +43,7 @@ public suspend fun ApplicationCommand<*>.subCommandAdditionalDocumentation(
 ) {
 	val action = DocAdditionBuilder()
 	action.builder()
-	subCommandAdditionalDocumentation[this.name] = action
+	subCommandAdditionalDocumentation[this.name.translate()] = action
 }
 
 /**

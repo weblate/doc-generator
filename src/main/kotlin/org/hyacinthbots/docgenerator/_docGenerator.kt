@@ -20,6 +20,8 @@ import org.hyacinthbots.docgenerator.generator.DocsGenerator
 
 private val generatorLogger = KotlinLogging.logger {}
 
+internal var externalBundle: String? = null
+
 /**
  * DSL for configuring the options of doc-generator.
  *
@@ -66,6 +68,8 @@ public suspend fun ExtensibleBotBuilder.docsGenerator(
 						extensions.values.toMutableList(),
 						if (action.translationSupport.enableTranslations) action.translationSupport.supportedLanguages else null
 					)
+
+					if (action.translationSupport.enableTranslations) externalBundle = action.translationSupport.bundleName
 				}
 
 				else -> throw InvalidEnvironmentVariableException("environment", action.environment)

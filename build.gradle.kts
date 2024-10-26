@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Meta {
-    const val PROJECT_VERSION = "0.2.2"
+    const val PROJECT_VERSION = "0.3.0-beta.1"
     const val DESCRIPTION = "Generate documentation for KordEx bots!"
     const val GITHUB_REPO = "HyacinthBots/doc-generator"
     const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -38,6 +38,7 @@ plugins {
     alias(libs.plugins.git.hooks)
     alias(libs.plugins.licenser)
     alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.kordex.plugin)
 }
 
 group = "org.hyacinthbots"
@@ -62,20 +63,33 @@ repositories {
         name = "Kord Extensions (Snapshots)"
         url = uri("https://snapshots-repo.kordex.dev")
     }
+
+    maven {
+        name = "Kord Extensions (Releases)"
+        url = uri("https://releases-repo.kordex.dev")
+    }
 }
 
 dependencies {
     detektPlugins(libs.detekt)
 
     implementation(libs.kotlin.stdlib)
-    implementation(libs.kordex)
-
     implementation(libs.logging)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(kotlin("test-junit5"))
     testRuntimeOnly(libs.junit.jupiter.engine)
+}
+
+kordEx {
+    kordExVersion = "2.3.0-20241020.143126-1"
+
+    i18n {
+        classPackage = "docgenerator.i18n"
+        translationBundle = "doc-generator.strings"
+        publicVisibility = false
+    }
 }
 
 gitHooks {
@@ -131,6 +145,7 @@ detekt {
 license {
     setHeader(rootProject.file("HEADER"))
     include("**/*.kt", "**/*.java", "**/strings**.properties")
+    exclude("**/Translations.kt")
 }
 
 signing {
