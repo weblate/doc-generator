@@ -4,6 +4,21 @@ that automatically generates documentation for commands within your KordEx bot.
 
 This project is licensed under the [MIT License](https://mit-license.org/)
 
+---
+
+### Translation Status
+
+<a href="https://hosted.weblate.org/engage/lilybot/">
+<img src="https://hosted.weblate.org/widget/lilybot/doc-generator/287x66-black.png" alt="Translation status" />
+</a>
+
+You can contribute to the translations via [this link](https://hosted.weblate.org/engage/lilybot/)
+
+Translations are hosted on [weblate](https://hosted.weblate.org)
+
+---
+
+
 ## Installation
 
 ### Latest version
