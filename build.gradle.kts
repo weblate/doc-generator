@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Meta {
-    const val PROJECT_VERSION = "0.3.0-beta.1"
+    const val PROJECT_VERSION = "0.3.0-rc.1"
     const val DESCRIPTION = "Generate documentation for KordEx bots!"
     const val GITHUB_REPO = "HyacinthBots/doc-generator"
     const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -83,7 +83,8 @@ dependencies {
 }
 
 kordEx {
-    kordExVersion = "2.3.0-20241020.143126-1"
+    kordExVersion = "2.3.1-SNAPSHOT"
+    ignoreIncompatibleKotlinVersion = true
 
     i18n {
         classPackage = "docgenerator.i18n"
