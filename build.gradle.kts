@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Meta {
-    const val PROJECT_VERSION = "0.3.0-rc.1"
+    const val PROJECT_VERSION = "0.3.0-rc.2"
     const val DESCRIPTION = "Generate documentation for KordEx bots!"
     const val GITHUB_REPO = "HyacinthBots/doc-generator"
     const val RELEASE = "https://s01.oss.sonatype.org/content/repositories/releases/"
@@ -50,13 +50,8 @@ repositories {
     mavenCentral()
 
     maven {
-        name = "Sonatype Snapshots (Legacy)"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-    }
-
-    maven {
-        name = "Sonatype Snapshots"
-        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+        name = "Kord Snapshots"
+        url = uri("https://repo.kord.dev/snapshots")
     }
 
     maven {
@@ -67,6 +62,16 @@ repositories {
     maven {
         name = "Kord Extensions (Releases)"
         url = uri("https://releases-repo.kordex.dev")
+    }
+
+    maven {
+        name = "Sonatype Snapshots (Legacy)"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
+
+    maven {
+        name = "Sonatype Snapshots"
+        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
     }
 }
 
@@ -83,7 +88,7 @@ dependencies {
 }
 
 kordEx {
-    kordExVersion = "2.3.1-SNAPSHOT"
+    kordExVersion = "2.3.1-20241123.224536-17"
     ignoreIncompatibleKotlinVersion = true
 
     i18n {
